@@ -6,9 +6,10 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="add_payment_name">Name of payment:</string>
+    <string name="add_payment_name">Name of event:</string>
     <string name="date_of_payment">Date payment is due:</string>
     <string name="type_of_payment">Type of payment:</string>
+    <string name="error_message">Please fill all required fields</string>
     <string-array name="payment_type_array">
         <item>One-time payment</item>
         <item>Monthly payment</item>

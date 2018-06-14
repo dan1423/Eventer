@@ -1,12 +1,10 @@
 package com.example.danny.paymentreminder;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
+import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,10 +17,16 @@ import android.view.MenuItem;
 public class MainFragment extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    DBHandler dbHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHandler = new DBHandler(getApplicationContext(),null,null,1);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -76,7 +80,7 @@ public class MainFragment extends AppCompatActivity
         if (id == R.id.dates) {
             // Handle the camera action
         } else if (id == R.id.add) {
-            fragment = new FragmentAddNewPaymentDate();
+            fragment = new FragmentAddNewEvent();
         } else if (id == R.id.export) {
 
         } else if (id == R.id.upcoming) {
@@ -86,6 +90,8 @@ public class MainFragment extends AppCompatActivity
         } else if (id == R.id.faqs) {
 
         }
+
+        Log.i("DATABASE: ",dbHandler.databaseToString());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_layout_screen,fragment);
