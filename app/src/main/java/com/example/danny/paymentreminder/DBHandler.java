@@ -80,6 +80,8 @@ public class DBHandler extends SQLiteOpenHelper {
         return dbString;
     }
 
+    //public
+
 }
 
 

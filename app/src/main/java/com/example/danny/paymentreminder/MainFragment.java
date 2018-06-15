@@ -78,7 +78,7 @@ public class MainFragment extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.dates) {
-            // Handle the camera action
+           fragment = new EventsFragment();
         } else if (id == R.id.add) {
             fragment = new FragmentAddNewEvent();
         } else if (id == R.id.export) {
