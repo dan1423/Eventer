@@ -10,11 +10,13 @@
     <string name="date_of_payment">Date payment is due:</string>
     <string name="type_of_payment">Type of payment:</string>
     <string name="error_message">Please fill all required fields</string>
+    <string name="enter_email">Enter valid email address:</string>
+    <string name="error_message_for_export_layout">Please enter valid email address</string>
     <string-array name="payment_type_array">
         <item>One-time payment</item>
         <item>Monthly payment</item>
         <item>Quarterly payment</item>
         <item>Yearly payment</item>
-        <item>Daily payment</item>
+        <item>Weekly payment</item>
     </string-array>
 </resources>

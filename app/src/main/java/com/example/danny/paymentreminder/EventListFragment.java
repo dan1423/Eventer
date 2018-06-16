@@ -13,9 +13,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventsFragment extends Fragment {
+public class EventListFragment extends Fragment {
 
-    public EventsFragment(){
+    public EventListFragment(){
 
     }
 
@@ -38,13 +38,8 @@ public class EventsFragment extends Fragment {
         eventsView = inflater.inflate(R.layout.recycler_view_for_list_events, container, false);
         recyclerView = (RecyclerView)eventsView.findViewById(R.id.recycler_view);
 
-
-        EventObject eventObject = new EventObject("sdfsdfsd",(long)345453,1);
-        EventObject eventObject2 = new EventObject("sdfsdfsd",(long)345453,1);
-        EventObject eventObject3 = new EventObject("sdfsdfsd",(long)345453,1);
-        eventObjects.add(eventObject);
-        eventObjects.add(eventObject2);
-        eventObjects.add(eventObject3);
+        //get all events from database
+       eventObjects = dbHandler.queryAllEvents();
 
         EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects);
 

@@ -39,7 +39,7 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
         EventObject eventObject = eventObjects.get(position);
 
         holder.txtEventName.setText(eventObject.getEventName());
-        holder.txtEventType.setText(eventObject.getEventType()+"");
+        holder.txtEventType.setText(eventObject.getEventType());
         holder.txtEventDate.setText(eventObject.getEventDate()+"");
     }
 

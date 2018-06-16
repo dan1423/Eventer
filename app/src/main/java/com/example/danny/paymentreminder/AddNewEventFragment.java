@@ -26,9 +26,9 @@ import java.util.Locale;
 *  information will be saved to phone's internal storage
 * */
 
-public class FragmentAddNewEvent extends Fragment {
+public class AddNewEventFragment extends Fragment {
 
-    public FragmentAddNewEvent(){
+    public AddNewEventFragment(){
 
     }
     private View addNewPaymentView;
@@ -86,9 +86,11 @@ public class FragmentAddNewEvent extends Fragment {
                   textErrorMessage.setVisibility(View.VISIBLE);
                 }else{
                     textErrorMessage.setVisibility(View.INVISIBLE);
-                    long date = getDateFromString(editTextPaymentDate.getText().toString()).getTime();
+                    Date date = ( getDateFromString ((editTextPaymentDate.getText().toString())));
+                    String paymentType = spinnerPaymentType.getSelectedItem().
+                            toString().replace("payment","").trim();
                     EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
-                            ,date,spinnerPaymentType.getSelectedItemPosition());
+                            ,date,paymentType);
                     saveEventToDatabase(eventObject);
                 }
             }
@@ -138,7 +140,7 @@ public class FragmentAddNewEvent extends Fragment {
        return true;
     }
 
-    private Date getDateFromString(String d){
+   private Date getDateFromString(String d){
 
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
 

@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.Date;
+
 public class DBHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION =  1;
@@ -44,7 +47,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_EVENTNAME, eventObject.getEventName());
         values.put(COLUMN_EVENTTYPE, eventObject.getEventType()+"");
-        values.put(COLUMN_EVENTDATE, eventObject.getEventDate()+"");
+        values.put(COLUMN_EVENTDATE, eventObject.getEventDate().getTime()+"");
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_EVENTS, null, values);
         db.close();
@@ -80,7 +83,41 @@ public class DBHandler extends SQLiteOpenHelper {
         return dbString;
     }
 
-    //public
+    //we will get rows from database and convert to EventObject to save to arraylist
+    public ArrayList<EventObject> queryAllEvents(){
+
+        ArrayList<EventObject> eventObjects = new ArrayList<>();
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_EVENTS ;// why not leave out the WHERE  clause?
+
+        //Cursor points to a location in your results
+        Cursor recordSet = db.rawQuery(query, null);
+        //Move to the first row in your results
+        recordSet.moveToFirst();
+
+        //Position after the last row means the end of the results
+        while (!recordSet.isAfterLast()) {
+            // null could happen if we used our empty constructor
+            if (recordSet.getString(recordSet.getColumnIndex("event_name")) != null) {
+                EventObject eventObject = new EventObject(
+                        recordSet.getString(recordSet.getColumnIndex("event_name")),
+                        new Date(Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date")))),//convert long to date
+                        recordSet.getString(recordSet.getColumnIndex("event_type")) );
+
+                eventObjects.add(eventObject);
+            }
+            recordSet.moveToNext();
+        }
+        db.close();
+
+        return eventObjects;
+
+    }
+
+    public void clearTable(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL("delete from "+ TABLE_EVENTS);
+    }
 
 }
 
