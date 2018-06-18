@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.ViewHolder>{
@@ -38,9 +39,11 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
 
         EventObject eventObject = eventObjects.get(position);
 
+
+        String d = convertLongToDate(eventObject.getEventDate());
         holder.txtEventName.setText(eventObject.getEventName());
         holder.txtEventType.setText(eventObject.getEventType());
-        holder.txtEventDate.setText(eventObject.getEventDate()+"");
+        holder.txtEventDate.setText(d);
     }
 
     @Override
@@ -58,5 +61,12 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
             txtEventDate= (TextView)itemView.findViewById(R.id.txt_list_item_event_date);
             txtEventType = (TextView)itemView.findViewById(R.id.txt_list_item_event_type);
         }
+    }
+
+
+    private String convertLongToDate(Long l){
+        CustomDateParser parser = new CustomDateParser(l) ;
+        return parser.convertLongToDate();
+
     }
 }

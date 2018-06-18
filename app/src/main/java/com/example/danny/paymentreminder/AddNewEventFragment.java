@@ -90,7 +90,7 @@ public class AddNewEventFragment extends Fragment {
                     String paymentType = spinnerPaymentType.getSelectedItem().
                             toString().replace("payment","").trim();
                     EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
-                            ,date,paymentType);
+                            ,date.getTime(),paymentType);
                     saveEventToDatabase(eventObject);
                 }
             }

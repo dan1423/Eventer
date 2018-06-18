@@ -96,6 +96,7 @@ public class MainFragment extends AppCompatActivity
             fragment = new ExportPaymentsFragment();
 
         } else if (id == R.id.upcoming) {
+            fragment = new UpcomingEventsFragment();
 
         } else if (id == R.id.settings) {
 

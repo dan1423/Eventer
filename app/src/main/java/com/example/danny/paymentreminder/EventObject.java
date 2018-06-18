@@ -5,10 +5,10 @@ import java.util.Date;
 public class EventObject {
 
     String eventName;
-    Date eventDate;
+    long eventDate;
    String eventType;
 
-    public EventObject(String eventName, Date eventDate, String eventType) {
+    public EventObject(String eventName, long eventDate, String eventType) {
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.eventType = eventType;
@@ -22,11 +22,11 @@ public class EventObject {
         this.eventName = eventName;
     }
 
-    public Date getEventDate() {
+    public long getEventDate() {
         return eventDate;
     }
 
-    public void setEventDate(Date eventDate) {
+    public void setEventDate(long eventDate) {
         this.eventDate = eventDate;
     }
 

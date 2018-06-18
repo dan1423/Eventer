@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -18,6 +20,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_EVENTNAME = "event_name";
     private static final String COLUMN_EVENTTYPE = "event_type";
     private static final String COLUMN_EVENTDATE = "event_date";
+
 
 
 
@@ -47,7 +50,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(COLUMN_EVENTNAME, eventObject.getEventName());
         values.put(COLUMN_EVENTTYPE, eventObject.getEventType()+"");
-        values.put(COLUMN_EVENTDATE, eventObject.getEventDate().getTime()+"");
+        values.put(COLUMN_EVENTDATE, eventObject.getEventDate()+"");
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_EVENTS, null, values);
         db.close();
@@ -99,9 +102,10 @@ public class DBHandler extends SQLiteOpenHelper {
         while (!recordSet.isAfterLast()) {
             // null could happen if we used our empty constructor
             if (recordSet.getString(recordSet.getColumnIndex("event_name")) != null) {
+
                 EventObject eventObject = new EventObject(
                         recordSet.getString(recordSet.getColumnIndex("event_name")),
-                        new Date(Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date")))),//convert long to date
+                        Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date"))),//convert string to long
                         recordSet.getString(recordSet.getColumnIndex("event_type")) );
 
                 eventObjects.add(eventObject);

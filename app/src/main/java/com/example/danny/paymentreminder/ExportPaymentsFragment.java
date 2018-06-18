@@ -29,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 
@@ -49,6 +50,7 @@ public class ExportPaymentsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
     }
 
@@ -79,10 +81,11 @@ public class ExportPaymentsFragment extends Fragment {
 
     private void beginProecdure(){
         StringBuilder builder = getAllPaymentsAsCSV();
-       File file =  writeStringCSVToFile(builder.toString());
-       if(file !=null){
-           sendEmail(file);
-       }
+        File f = writeStringCSVToFile(builder.toString());
+        if(f !=null){
+             sendEmail(f);
+        }
+
 
     }
 
@@ -96,9 +99,13 @@ public class ExportPaymentsFragment extends Fragment {
 
     private StringBuilder convertArrayList (ArrayList<EventObject> eventObjects){
         StringBuilder builder = new StringBuilder();
+        builder.append("Event,Date,Event-Type\n");//csv/excel header
+        CustomDateParser parser;
         for(int i = 0; i < eventObjects.size(); i++){
             EventObject e = eventObjects.get(i);
-            String s = e.getEventName() +","+e.getEventDate()+","+e.getEventType()+"\n";
+            parser = new CustomDateParser(e.getEventDate());
+
+            String s = e.getEventName() +","+parser.convertLongToDate()+","+e.getEventType()+"\n";
             builder.append(s);
         }
 
@@ -120,13 +127,20 @@ public class ExportPaymentsFragment extends Fragment {
         File file = new File(dir, "event_dates.csv");
 
         try{
-
+            
             FileUtils.writeStringToFile(file,str);
             return file;
         }catch(IOException e){
             e.printStackTrace();
         }
-       return null;
+        return null;
+    }
+
+    private File getFilePath(){
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getPath();
+        File file = new File(path + "/event_dates.csv");
+
+        return file;
     }
 
 
@@ -148,7 +162,5 @@ public class ExportPaymentsFragment extends Fragment {
 
 
     }
-
-
 
 }
