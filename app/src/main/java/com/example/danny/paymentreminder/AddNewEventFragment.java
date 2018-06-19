@@ -43,7 +43,9 @@ public class AddNewEventFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         dbHandler = new DBHandler(getContext(),null, null, 1);
+        //saveEventToDatabase(new EventObject("Test2",1529262000000L,"One-time"));
     }
 
     @Nullable
