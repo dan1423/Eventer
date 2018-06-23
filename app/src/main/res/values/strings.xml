@@ -1,22 +1,22 @@
 <resources>
-    <string name="app_name">PaymentReminder</string>
+    <string name="app_name">EventReminder</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="add_payment_name">Name of event:</string>
-    <string name="date_of_payment">Date payment is due:</string>
-    <string name="type_of_payment">Type of payment:</string>
+    <string name="add_event_name">Name of event:</string>
+    <string name="date_of_event">Date of event:</string>
+    <string name="type_of_event">Type of event:</string>
     <string name="error_message">Please fill all required fields</string>
     <string name="enter_email">Enter valid email address:</string>
+    <string name="not_available">NO UPCOMING EVENTS THIS MONTH</string>
     <string name="error_message_for_export_layout">Please enter valid email address</string>
-    <string-array name="payment_type_array">
-        <item>One-time payment</item>
-        <item>Monthly payment</item>
-        <item>Quarterly payment</item>
-        <item>Yearly payment</item>
-        <item>Weekly payment</item>
+    <string-array name="event_type_array">
+        <item>One-time event</item>
+        <item>Monthly event</item>
+        <item>Yearly event</item>
+        <item>Weekly event</item>
     </string-array>
 </resources>

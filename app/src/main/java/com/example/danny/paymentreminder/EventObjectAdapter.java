@@ -6,20 +6,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.ViewHolder>{
 
    private Context context;
    private List<EventObject> eventObjects;
+    public CustomClickListener listener;
 
-    public EventObjectAdapter(Context context, List<EventObject> eventObjects) {
+    public EventObjectAdapter(Context context, List<EventObject> eventObjects, CustomClickListener listener) {
         this.context = context;
         this.eventObjects = eventObjects;
+        this.listener = listener;
     }
 
     @NonNull
@@ -35,7 +36,7 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
         EventObject eventObject = eventObjects.get(position);
 
@@ -44,7 +45,19 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
         holder.txtEventName.setText(eventObject.getEventName());
         holder.txtEventType.setText(eventObject.getEventType());
         holder.txtEventDate.setText(d);
+        holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener != null)
+                 listener.onItemClick(position);
+            }
+        });
+
+
+
     }
+
+
 
     @Override
     public int getItemCount() {
@@ -54,12 +67,14 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView txtEventName,txtEventDate, txtEventType;
+        RelativeLayout relativeLayout;
 
         public ViewHolder(View itemView) {
             super(itemView);
             txtEventName = (TextView)itemView.findViewById(R.id.txt_list_item_event_name);
             txtEventDate= (TextView)itemView.findViewById(R.id.txt_list_item_event_date);
             txtEventType = (TextView)itemView.findViewById(R.id.txt_list_item_event_type);
+            relativeLayout = (RelativeLayout)itemView.findViewById(R.id.relative_layout_single_item);
         }
     }
 

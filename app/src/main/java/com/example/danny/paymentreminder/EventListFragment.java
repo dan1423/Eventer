@@ -1,18 +1,23 @@
 package com.example.danny.paymentreminder;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
 public class EventListFragment extends Fragment {
 
@@ -29,7 +34,7 @@ public class EventListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHandler = new DBHandler(getContext(),null,null,1);
+        dbHandler = new DBHandler(getContext(),null,null, StaticVariables.VERSION);
         eventObjects = new ArrayList<>();
     }
 
@@ -42,15 +47,39 @@ public class EventListFragment extends Fragment {
         //get all events from database
        eventObjects = dbHandler.queryAllEvents();
 
-        EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects);
+        EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects, new CustomClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+               sendToDetailedEvent(eventObjects.get(pos));
+            }
+        });
 
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
+        recyclerView.addItemDecoration(itemDecor);
+       recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return eventsView;
 
+    }
+
+
+
+
+
+    private void sendToDetailedEvent(EventObject eventObject){
+        Fragment fragment = new DetailedEventFragment();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main_layout_screen,fragment);
+        fragmentTransaction.addToBackStack(null);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event_object", eventObject);
+
+        fragment.setArguments(bundle);
+        fragmentTransaction.commit();
     }
 
 

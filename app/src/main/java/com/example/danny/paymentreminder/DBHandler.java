@@ -56,6 +56,31 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addMultipleEvents(ArrayList<EventObject> eventObjects){
+        if(eventObjects.isEmpty()){
+            return;
+        }
+        String eventName = eventObjects.get(0).getEventName();
+        String eventType = eventObjects.get(0).getEventType();
+        String eventDate = eventObjects.get(0).getEventDate()+"";
+       String queryString =  "INSERT INTO "+ TABLE_EVENTS+"(event_name,event_type,event_date)"+
+                            " SELECT '"+eventName+ "' AS "+ COLUMN_EVENTNAME+ ", '"+
+                            eventType + "' AS "+ COLUMN_EVENTTYPE+ ", '"+
+                            eventDate + "' AS " + COLUMN_EVENTDATE;
+
+        for(int i = 1; i < eventObjects.size(); i++){
+            eventName = eventObjects.get(i).getEventName();
+            eventType = eventObjects.get(i).getEventType();
+            eventDate = eventObjects.get(i).getEventDate()+"";
+
+           queryString +=   " UNION ALL SELECT '"+ eventName +"','"+eventType+"','"+eventDate +"'";
+
+
+        }
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(queryString);
+    }
+
     //Delete a product from the database
     public void deleteEvent(String eventName){
         SQLiteDatabase db = getWritableDatabase();
@@ -108,6 +133,8 @@ public class DBHandler extends SQLiteOpenHelper {
                         Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date"))),//convert string to long
                         recordSet.getString(recordSet.getColumnIndex("event_type")) );
 
+                eventObject.setEventId(Integer.parseInt(recordSet.getString(recordSet.getColumnIndex("event_id"))));
+
                 eventObjects.add(eventObject);
             }
             recordSet.moveToNext();
@@ -118,10 +145,22 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public void updateEvent(EventObject eventObject){
+        String query = "UPDATE "+ TABLE_EVENTS +
+        " SET event_name = " +eventObject.getEventName() +", "
+                +"event_type = "+eventObject.getEventType()+", "
+                +"event_date = "+eventObject.getEventDate()+
+        " WHERE event_id =  " + eventObject.getEventId();
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+    }
+
     public void clearTable(){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("delete from "+ TABLE_EVENTS);
     }
+
 
 }
 

@@ -5,17 +5,13 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/dates"
+            android:id="@+id/events"
             android:icon="@drawable/icons8_calendar_50"
-            android:title="Dates" />
+            android:title="Events" />
         <item
             android:id="@+id/add"
             android:icon="@drawable/icons8_add_new_50"
             android:title="Add" />
-        <item
-            android:id="@+id/export"
-            android:icon="@drawable/icons8_export_50"
-            android:title="Export" />
         <item
             android:id="@+id/upcoming"
             android:icon="@drawable/icons8_siren_50"

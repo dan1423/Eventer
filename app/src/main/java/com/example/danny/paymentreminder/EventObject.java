@@ -1,12 +1,14 @@
 package com.example.danny.paymentreminder;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class EventObject {
+public class EventObject implements Serializable{
 
     String eventName;
     long eventDate;
    String eventType;
+   private int eventId;
 
     public EventObject(String eventName, long eventDate, String eventType) {
         this.eventName = eventName;
@@ -38,12 +40,21 @@ public class EventObject {
         this.eventType = eventType;
     }
 
+    public int getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(int eventId) {
+        this.eventId = eventId;
+    }
+
     @Override
     public String toString() {
         return "EventObject{" +
                 "eventName='" + eventName + '\'' +
                 ", eventDate=" + eventDate +
-                ", eventType=" + eventType +
+                ", eventType='" + eventType + '\'' +
+                ", eventId=" + eventId +
                 '}';
     }
 }

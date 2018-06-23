@@ -26,6 +26,7 @@ public class MainFragment extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     DBHandler dbHandler;
+    UpdateDatabase updateDatabase;
     private int STORAGE_PERMISSION_CODE = 1;
 
     @Override
@@ -34,7 +35,10 @@ public class MainFragment extends AppCompatActivity
         setContentView(R.layout.activity_main);
         resolvePermission();
 
-        dbHandler = new DBHandler(getApplicationContext(),null,null,1);
+        dbHandler = new DBHandler(getApplicationContext(),null,null, StaticVariables.VERSION);
+        updateDatabase = new UpdateDatabase(getApplicationContext());
+        updateDatabase.updateAllEvents();
+
         //dbHandler.clearTable();
 
 
@@ -88,20 +92,17 @@ public class MainFragment extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        if (id == R.id.dates) {
+        if (id == R.id.events) {
            fragment = new EventListFragment();
         } else if (id == R.id.add) {
-            fragment = new AddNewEventFragment();
-        } else if (id == R.id.export) {
-            fragment = new ExportPaymentsFragment();
-
+            fragment = new AddOrEditEventFragment();
         } else if (id == R.id.upcoming) {
             fragment = new UpcomingEventsFragment();
 
         } else if (id == R.id.settings) {
-
+            fragment = new SettingsFragments();
         } else if (id == R.id.faqs) {
-
+            fragment = new FAQFragment();
         }
 
         Log.i("DATABASE: ",dbHandler.databaseToString());
