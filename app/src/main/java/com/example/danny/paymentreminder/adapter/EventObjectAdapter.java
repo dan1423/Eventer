@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.example.danny.paymentreminder.Custom_Classes.CustomClickListener;
+import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.R;
 
 import java.util.List;
 
@@ -45,6 +49,7 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
         holder.txtEventName.setText(eventObject.getEventName());
         holder.txtEventType.setText(eventObject.getEventType());
         holder.txtEventDate.setText(d);
+
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

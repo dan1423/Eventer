@@ -1,7 +1,6 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,16 +9,18 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.danny.paymentreminder.Custom_Classes.CSVExporter;
+import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.sqllite.DBHandler;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.R;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
-
-import static android.content.Context.MODE_PRIVATE;
 
 public class SettingsFragments extends Fragment {
 
@@ -199,7 +200,8 @@ public class SettingsFragments extends Fragment {
     }
 
     private void deleteAllEvents(){
-
+        DBHandler dbHandler = new DBHandler(getContext(), null,null,1);
+        dbHandler.clearTable();
     }
 
    /* private String getRecentEmail(){

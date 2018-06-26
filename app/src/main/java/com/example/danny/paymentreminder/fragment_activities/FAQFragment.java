@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.danny.paymentreminder.R;
 
 public class FAQFragment extends Fragment{
 

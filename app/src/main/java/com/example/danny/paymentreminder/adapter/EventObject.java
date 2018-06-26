@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.adapter;
 
 import java.io.Serializable;
 import java.util.Date;

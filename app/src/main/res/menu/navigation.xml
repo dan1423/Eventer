@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/events"
+        android:icon="@drawable/icons8_calendar_50"
+        android:title="Events" />
+    <item
+        android:id="@+id/add"
+        android:icon="@drawable/icons8_add_new_50"
+        android:title="Add" />
+    <item
+        android:id="@+id/upcoming"
+        android:icon="@drawable/icons8_siren_50"
+        android:title="Upcoming" />
+    <item
+        android:id="@+id/settings"
+        android:icon="@drawable/icons8_settings_80"
+        android:title="Settings" />
+
+    <item
+        android:id="@+id/faqs"
+        android:icon="@drawable/icons8_questions_50"
+        android:title="FAQs" />
+
+</menu>

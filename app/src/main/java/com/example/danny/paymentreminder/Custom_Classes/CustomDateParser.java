@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.Custom_Classes;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

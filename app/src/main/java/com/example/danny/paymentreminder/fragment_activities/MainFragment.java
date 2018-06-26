@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +20,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.example.danny.paymentreminder.sqllite.DBHandler;
+import com.example.danny.paymentreminder.R;
+import com.example.danny.paymentreminder.StaticVariables;
+import com.example.danny.paymentreminder.sqllite.UpdateDatabase;
 
 public class MainFragment extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,7 +58,16 @@ public class MainFragment extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        getSupportActionBar().setTitle("Events");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_layout_screen, new EventListFragment()).commit();
     }
+
+
+
 
     @Override
     public void onBackPressed() {
@@ -91,21 +104,29 @@ public class MainFragment extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Fragment fragment = null;
+        String title = "";
 
         if (id == R.id.events) {
            fragment = new EventListFragment();
+           title = "Events";
         } else if (id == R.id.add) {
             fragment = new AddOrEditEventFragment();
+            title = "Add Event";
         } else if (id == R.id.upcoming) {
             fragment = new UpcomingEventsFragment();
+            title = "Upcoming Events";
 
         } else if (id == R.id.settings) {
             fragment = new SettingsFragments();
+            title = "Settings";
         } else if (id == R.id.faqs) {
             fragment = new FAQFragment();
+            title = "Frequently Asked Questions";
         }
 
-        Log.i("DATABASE: ",dbHandler.databaseToString());
+        getSupportActionBar().setTitle(title);
+
+       // Log.i("DATABASE: ",dbHandler.databaseToString());
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.main_layout_screen,fragment);

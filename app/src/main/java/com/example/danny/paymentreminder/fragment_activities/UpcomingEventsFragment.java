@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.danny.paymentreminder.Custom_Classes.CustomClickListener;
+import com.example.danny.paymentreminder.Custom_Classes.CustomLocationManager;
+import com.example.danny.paymentreminder.sqllite.DBHandler;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.adapter.EventObjectAdapter;
+import com.example.danny.paymentreminder.R;
+import com.example.danny.paymentreminder.StaticVariables;
 
 import java.util.ArrayList;
 import java.util.Date;

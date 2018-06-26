@@ -1,6 +1,10 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.sqllite;
 
 import android.content.Context;
+
+import com.example.danny.paymentreminder.Custom_Classes.CustomLocationManager;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.StaticVariables;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,8 +76,8 @@ public class UpdateDatabase {
             String eventType = event.getEventType();
 
             //the event is past and done, no need to have in database
-            if(eventDate.before(currentDate) && eventType.trim().equals("One-time")){
-                iterator.remove();
+            if(!eventDate.after(currentDate)  && !isSameDay(currentDate, eventDate) && eventType.trim().equals("One-time")){
+                 iterator.remove();
             //set the next date of the event
             }else if(eventDate.before(currentDate)){
                if(eventType.equals("Weekly")){
@@ -86,6 +90,13 @@ public class UpdateDatabase {
             }
         }
         dbHandler.addMultipleEvents(eventObjects);
+    }
+
+    private boolean isSameDay(Date d1, Date d2){
+        if(d1.getDay() != d2.getDay() || d1.getMonth() != d2.getMonth() ||d1.getYear() != d2.getYear()){
+            return false;
+        }
+        return true;
     }
 
 

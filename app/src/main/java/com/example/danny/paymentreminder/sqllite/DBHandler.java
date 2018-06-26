@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.sqllite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,10 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import com.example.danny.paymentreminder.adapter.EventObject;
+
 import java.util.ArrayList;
-import java.util.Date;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -147,18 +146,27 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public void updateEvent(EventObject eventObject){
         String query = "UPDATE "+ TABLE_EVENTS +
-        " SET event_name = " +eventObject.getEventName() +", "
-                +"event_type = "+eventObject.getEventType()+", "
-                +"event_date = "+eventObject.getEventDate()+
-        " WHERE event_id =  " + eventObject.getEventId();
+        " SET event_name = '" +eventObject.getEventName() +"', "
+                +"event_type = '"+eventObject.getEventType()+"', "
+                +"event_date = '"+eventObject.getEventDate()+
+        "' WHERE event_id =  " + eventObject.getEventId();
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
     }
 
+    public void deleteEvent(EventObject eventObject){
+        String query = "DELETE FROM "+TABLE_EVENTS +" WHERE event_id = "+eventObject.getEventId();
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(query);
+
+    }
+
     public void clearTable(){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("delete from "+ TABLE_EVENTS);
+        db.execSQL("DELETE FROM "+ TABLE_EVENTS);
+        db.execSQL("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME = '" + TABLE_EVENTS +"'");
+
     }
 
 

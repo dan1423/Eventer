@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 import android.app.DatePickerDialog;
 import android.content.res.Resources;
@@ -17,6 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.sqllite.DBHandler;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.R;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -119,7 +124,7 @@ public class AddOrEditEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if(!areFieldsSet()){
-                    errorMessageHandler("Event name has to be longer than 3 letters",View.VISIBLE);
+                    errorMessageHandler("Please enter an event name",View.VISIBLE);
                 }  else if(doesNameExists(editTextPaymentName.getText().toString())){
                     errorMessageHandler("Event name exists, please choose a different one",View.VISIBLE);
                 }else{
@@ -159,6 +164,7 @@ public class AddOrEditEventFragment extends Fragment {
 
     /*****************USER WANTS TO EDIT AN EXISTING EVENT****************************************/
     private void setEditMode(){
+        getActivity().setTitle("Edit Event");
         //change button text
         setEditFields();
         btnMain.setOnClickListener(new View.OnClickListener() {
@@ -173,6 +179,7 @@ public class AddOrEditEventFragment extends Fragment {
                             toString().replace("event","").trim();
                     EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
                             ,date.getTime(),paymentType);
+                    eventObject.setEventId(eventObjectForEditMode.getEventId());
 
                     updateEvent(eventObject);
                 }
@@ -253,7 +260,7 @@ public class AddOrEditEventFragment extends Fragment {
 
     //check if all input fields are filled/correct
     private boolean areFieldsSet(){
-        if(editTextPaymentName.getText().toString().trim().length() < 3){
+        if(editTextPaymentName.getText().toString().trim().length() <= 0){
             return false;
         }
         if(editTextPaymentDate.getText().toString().trim().length() <= 0){

@@ -1,4 +1,4 @@
-package com.example.danny.paymentreminder;
+package com.example.danny.paymentreminder.fragment_activities;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.sqllite.DBHandler;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.R;
 
 public class DetailedEventFragment extends Fragment {
     private View detailedView;
@@ -74,8 +79,7 @@ public class DetailedEventFragment extends Fragment {
         btnDeleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
-
+                    deleteEvent();
             }
         });
 
@@ -83,11 +87,16 @@ public class DetailedEventFragment extends Fragment {
 
     }
 
+    private void deleteEvent(){
+        DBHandler dbHandler = new DBHandler(getContext(), null, null, 1);
+        dbHandler.deleteEvent(eventObject);
+    }
+
     private void sendToEditEvent(){
         Fragment fragment = new AddOrEditEventFragment();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.main_layout_screen,fragment);
+        fragmentTransaction.replace(R.id.main_layout_screen_bottom_nav,fragment);
         fragmentTransaction.addToBackStack(null);
 
         Bundle bundle = new Bundle();
