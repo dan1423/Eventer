@@ -61,9 +61,21 @@ public class UpcomingEventsFragment extends Fragment {
         }
 
         recyclerView = (RecyclerView)upcomingView.findViewById(R.id.recycler_view_for_upcoming_events);
+       // EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects);
         EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects, new CustomClickListener() {
+
             @Override
-            public void onItemClick(int pos) {
+            public void onDeleteClick(int pos) {
+                //sendToDetailedEvent(eventObjects.get(pos));
+            }
+
+            @Override
+            public void onEditClick(int pos) {
+               // showDeleteConfirmationDialog();
+            }
+
+            @Override
+            public void onInfoClick(int pos) {
 
             }
         });
@@ -71,9 +83,9 @@ public class UpcomingEventsFragment extends Fragment {
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);
 
-        DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
+      /*  DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
         recyclerView.addItemDecoration(itemDecor);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));*/
 
 
         return upcomingView;

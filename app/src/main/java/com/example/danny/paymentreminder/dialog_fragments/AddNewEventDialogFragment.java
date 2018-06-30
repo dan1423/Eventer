@@ -1,10 +1,10 @@
-package com.example.danny.paymentreminder.fragment_activities;
+package com.example.danny.paymentreminder.dialog_fragments;
 
 import android.app.DatePickerDialog;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -18,10 +18,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
-import com.example.danny.paymentreminder.sqllite.DBHandler;
-import com.example.danny.paymentreminder.adapter.EventObject;
 import com.example.danny.paymentreminder.R;
+import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.sqllite.DBHandler;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,16 +28,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-/*The purpose of this class is to add new event date or edit event
-*  all input fields are required
-*  information will be saved to phone's internal storage
-* */
+public class AddNewEventDialogFragment extends Fragment{
 
-public class AddOrEditEventFragment extends Fragment {
-
-    public AddOrEditEventFragment(){
+    public AddNewEventDialogFragment(){
 
     }
+
+    //initialize views
     private View addNewPaymentView;
     Spinner spinnerPaymentType;
     Button btnMain;
@@ -46,12 +42,8 @@ public class AddOrEditEventFragment extends Fragment {
     TextView textErrorMessage;
     private ImageView imgExitFrag;
 
-    String errorMessage = "";
-
+    //initialize custom objects
     DBHandler dbHandler;
-
-    Bundle bundle;
-    EventObject eventObjectForEditMode;
 
 
     @Override
@@ -59,16 +51,10 @@ public class AddOrEditEventFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         dbHandler = new DBHandler(getContext(),null, null, 1);
-       /*  saveEventToDatabase(new EventObject("Test1",1529545260000L,"One-time"));
+      /* saveEventToDatabase(new EventObject("Test1",1529545260000L,"One-time"));
         saveEventToDatabase(new EventObject("Test2",1529458860000L,"Monthly"));
         saveEventToDatabase(new EventObject("Test3",new Date().getTime(),"Yearly"));
         saveEventToDatabase(new EventObject("Test4",1529372460000L,"Monthly"));*/
-
-        bundle = new Bundle();
-        bundle = this.getArguments();
-        if (bundle != null) {//only available when user wants to edit an event
-            eventObjectForEditMode = (EventObject) bundle.getSerializable("event_object");
-        }
     }
 
     @Nullable
@@ -91,10 +77,10 @@ public class AddOrEditEventFragment extends Fragment {
                         android.R.layout.simple_spinner_item);
         staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-      spinnerPaymentType.setAdapter(staticAdapter);
+        spinnerPaymentType.setAdapter(staticAdapter);
 
 
-      //when he user clicks the date text box, we want to open a calendar dialog
+        //when he user clicks the date text box, we want to open a calendar dialog
         editTextPaymentDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,24 +88,12 @@ public class AddOrEditEventFragment extends Fragment {
             }
         });
 
-
-
-
-        if(bundle !=null){
-            setEditMode();
-        }else{
-           setAddMode();
-        }
-
-
+            setLayoutEvents();
 
         return addNewPaymentView;
     }
 
-
-
-    /*****************USER WANTS TO ADD NEW EVENT****************************************/
-    private  void setAddMode(){
+    private  void setLayoutEvents(){
         btnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,9 +114,16 @@ public class AddOrEditEventFragment extends Fragment {
             }
         });
 
+        imgExitFrag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getFragmentManager();
+                fm.popBackStack();
+            }
+        });
+
     }
 
-    /*****************************METHODS USED BY ADD MODE*************************************/
     private boolean saveEventToDatabase(EventObject eventObject){
         //  Log.i("event: ", eventObjectForEditMode.toString());
 
@@ -162,83 +143,8 @@ public class AddOrEditEventFragment extends Fragment {
     }
 
 
-    /*****************USER WANTS TO EDIT AN EXISTING EVENT****************************************/
-    private void setEditMode(){
-        getActivity().setTitle("Edit Event");
-        //change button text
-        setEditFields();
-        btnMain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!areFieldsSet()){
-                    errorMessageHandler("Event name has to be  longer than 3 letters",View.VISIBLE);
-                }else{
-                    errorMessageHandler("",View.INVISIBLE);
-                    Date date = ( getDateFromString ((editTextPaymentDate.getText().toString())));
-                    String paymentType = spinnerPaymentType.getSelectedItem().
-                            toString().replace("event","").trim();
-                    EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
-                            ,date.getTime(),paymentType);
-                    eventObject.setEventId(eventObjectForEditMode.getEventId());
-
-                    updateEvent(eventObject);
-                }
-            }
-        });
-
-        //show exit button
-        imgExitFrag.setVisibility(View.VISIBLE);
-        imgExitFrag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                backToPreviousFragment();
-            }
-        });
 
 
-    }
-
-
-
-
-    /****************************MEDTHODS USED BY EDIT MODE**********************************/
-    private void setEditFields(){
-        btnMain.setText("Save Changes");
-        editTextPaymentName.setText(eventObjectForEditMode.getEventName());
-        long d = eventObjectForEditMode.getEventDate();
-        editTextPaymentDate.setText(new CustomDateParser(d).convertLongToDate());
-
-
-        int posOfType = getSpinnerSelectionId(eventObjectForEditMode.getEventType());
-        if(posOfType != -1){
-            spinnerPaymentType.setSelection(posOfType);
-        }
-
-       btnMain.setText("Save Changes");
-
-    }
-
-    private int getSpinnerSelectionId(String option){
-        Resources res = getResources();
-        String[] event_array = res.getStringArray(R.array.event_type_array);
-        for(int i = 0;i < event_array.length; i++){
-            if(event_array[i].trim().contains(option)){
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    private void backToPreviousFragment(){
-        FragmentManager fm = getFragmentManager();
-        fm.popBackStack();
-    }
-
-    private void updateEvent(EventObject eventObject){
-        dbHandler.updateEvent(eventObject);
-    }
-
-    /*******************************METHODS USED BY BOTH MODES***************************************************/
     private void errorMessageHandler(String msg, int visibility){
         textErrorMessage.setText(msg);
         textErrorMessage.setVisibility(visibility);

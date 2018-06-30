@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.danny.paymentreminder.fragment_activities.AddOrEditEventFragment;
 import com.example.danny.paymentreminder.fragment_activities.EventListFragment;
 import com.example.danny.paymentreminder.fragment_activities.FAQFragment;
 import com.example.danny.paymentreminder.fragment_activities.SettingsFragments;
@@ -24,7 +23,7 @@ import com.example.danny.paymentreminder.fragment_activities.UpcomingEventsFragm
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 import com.example.danny.paymentreminder.sqllite.UpdateDatabase;
 
-public class Main2Activity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     DBHandler dbHandler;
     UpdateDatabase updateDatabase;
@@ -44,10 +43,7 @@ public class Main2Activity extends AppCompatActivity {
             if (id == R.id.events) {
                 fragment = new EventListFragment();
                 title = "Events";
-            } else if (id == R.id.add) {
-                fragment = new AddOrEditEventFragment();
-                title = "Add Event";
-            } else if (id == R.id.upcoming) {
+            }else if (id == R.id.upcoming) {
                 fragment = new UpcomingEventsFragment();
                 title = "Upcoming Events";
 
@@ -61,6 +57,7 @@ public class Main2Activity extends AppCompatActivity {
 
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_left,R.anim.blank);
             ft.replace(R.id.main_layout_screen_bottom_nav,fragment);
             ft.commit();
             return true;
@@ -71,7 +68,7 @@ public class Main2Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
 
         resolvePermission();
         dbHandler = new DBHandler(getApplicationContext(),null,null, StaticVariables.VERSION);
@@ -97,7 +94,7 @@ public class Main2Activity extends AppCompatActivity {
     }
 
     private void requestStoragePermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(Main2Activity.this,
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)) {
 
             new AlertDialog.Builder(getApplicationContext())
@@ -106,7 +103,7 @@ public class Main2Activity extends AppCompatActivity {
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(Main2Activity.this,
+                            ActivityCompat.requestPermissions(MainActivity.this,
                                     new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE );
                         }
                     })
@@ -119,7 +116,7 @@ public class Main2Activity extends AppCompatActivity {
                     .create().show();
 
         } else {
-            ActivityCompat.requestPermissions(Main2Activity.this,
+            ActivityCompat.requestPermissions(MainActivity.this,
                     new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},STORAGE_PERMISSION_CODE );
         }
     }

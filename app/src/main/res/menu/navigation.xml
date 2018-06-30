@@ -6,10 +6,6 @@
         android:icon="@drawable/icons8_calendar_50"
         android:title="Events" />
     <item
-        android:id="@+id/add"
-        android:icon="@drawable/icons8_add_new_50"
-        android:title="Add" />
-    <item
         android:id="@+id/upcoming"
         android:icon="@drawable/icons8_siren_50"
         android:title="Upcoming" />
