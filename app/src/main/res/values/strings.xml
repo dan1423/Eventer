@@ -13,14 +13,32 @@
     <string name="enter_email">Enter valid email address:</string>
     <string name="not_available">NO UPCOMING EVENTS THIS MONTH</string>
     <string name="error_message_for_export_layout">Please enter valid email address</string>
+    <string name="channel_name">first channel</string>
+    <string name="channel_description">basic chanel</string>
     <string-array name="event_type_array">
         <item>One-time event</item>
         <item>Monthly event</item>
         <item>Yearly event</item>
         <item>Weekly event</item>
     </string-array>
+
+    <string-array name="sort_type_list">
+        <item>Recent</item>
+        <item>Future</item>
+        <item>Alphabetical</item>
+
+    </string-array>
+
+    <string-array name="reminder_list">
+        <item>One time</item>
+        <item>Every hour</item>
+        <item>Every 30 minutes</item>
+        <item>Every 15 minutes</item>
+    </string-array>
+
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
 </resources>

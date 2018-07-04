@@ -1,14 +1,12 @@
 package com.example.danny.paymentreminder.adapter;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.danny.paymentreminder.Custom_Classes.CustomClickListener;
 import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
@@ -17,16 +15,16 @@ import com.example.danny.paymentreminder.third_party.SwipeRevealLayout;
 
 import java.util.List;
 
-public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.ViewHolder>{
+public class CustomEventObjectAdapter extends RecyclerView.Adapter<CustomEventObjectAdapter.ViewHolder>{
 
    private Context context;
-   private List<EventObject> eventObjects;
+   private List<CustomEventObject> customEventObjects;
     public CustomClickListener listener;
-    //public ViewBinderHelper viewBinderHelper = new ViewBinderHelper();
 
-    public EventObjectAdapter(Context context, List<EventObject> eventObjects, CustomClickListener listener) {
+    //accompanying the usal recyclerview adapter, we add a custom click listener interface
+    public CustomEventObjectAdapter(Context context, List<CustomEventObject> customEventObjects, CustomClickListener listener) {
         this.context = context;
-        this.eventObjects = eventObjects;
+        this.customEventObjects = customEventObjects;
        this.listener = listener;
     }
 
@@ -46,12 +44,12 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
 
-        EventObject eventObject = eventObjects.get(position);
+        CustomEventObject customEventObject = customEventObjects.get(position);
+        CustomDateParser dateParser = setDateAndTime(customEventObject.getEventDate());
 
-        String d = convertLongToDate(eventObject.getEventDate());
-        holder.txtEventName.setText(stringShortener(eventObject.getEventName()));
-        holder.txtEventType.setText(eventObject.getEventType()+ " event");
-        holder.txtEventDate.setText("Next date: "+d);
+        holder.txtEventName.setText(stringShortener(customEventObject.getEventName()));
+        holder.txtEventType.setText(customEventObject.getEventType()+ " event");
+        holder.txtEventDate.setText("On " + dateParser.getDate() +"At "+dateParser.getTime());
 
 
 
@@ -90,7 +88,7 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
 
     @Override
     public int getItemCount() {
-        return eventObjects.size();
+        return customEventObjects.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -112,12 +110,16 @@ public class EventObjectAdapter extends RecyclerView.Adapter<EventObjectAdapter.
     }
 
 
-    private String convertLongToDate(Long l){
+    private CustomDateParser setDateAndTime(Long l){
         CustomDateParser parser = new CustomDateParser(l) ;
-        return parser.convertLongToDate();
+        parser.setDateAndTime();
+
+        return parser;
 
     }
 
+
+    //we use this method to shorten event names so we can fit it on a list widget
     private String stringShortener(String str) {
         if (str.length() <= 5) {
             return str;

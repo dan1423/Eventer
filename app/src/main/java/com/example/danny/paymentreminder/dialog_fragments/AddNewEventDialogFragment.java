@@ -1,12 +1,13 @@
 package com.example.danny.paymentreminder.dialog_fragments;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import com.example.danny.paymentreminder.Custom_Classes.AddAndEditMethods;
+import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
 import com.example.danny.paymentreminder.R;
-import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
+import com.example.danny.paymentreminder.notification_package.CustomNotification;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 
 import java.text.ParseException;
@@ -38,9 +43,10 @@ public class AddNewEventDialogFragment extends Fragment{
     private View addNewPaymentView;
     Spinner spinnerPaymentType;
     Button btnMain;
-    EditText editTextPaymentDate, editTextPaymentName;
+    EditText editTextPaymentDate, editTextPaymentName,editTextTime;
     TextView textErrorMessage;
     private ImageView imgExitFrag;
+    AddAndEditMethods methods;
 
     //initialize custom objects
     DBHandler dbHandler;
@@ -51,10 +57,7 @@ public class AddNewEventDialogFragment extends Fragment{
         super.onCreate(savedInstanceState);
 
         dbHandler = new DBHandler(getContext(),null, null, 1);
-      /* saveEventToDatabase(new EventObject("Test1",1529545260000L,"One-time"));
-        saveEventToDatabase(new EventObject("Test2",1529458860000L,"Monthly"));
-        saveEventToDatabase(new EventObject("Test3",new Date().getTime(),"Yearly"));
-        saveEventToDatabase(new EventObject("Test4",1529372460000L,"Monthly"));*/
+
     }
 
     @Nullable
@@ -66,9 +69,11 @@ public class AddNewEventDialogFragment extends Fragment{
         btnMain = (Button)addNewPaymentView.findViewById(R.id.button_add_new);
         editTextPaymentDate = (EditText)addNewPaymentView.findViewById(R.id.editText_date_of_event);
         editTextPaymentName = (EditText)addNewPaymentView.findViewById(R.id.editText_event_name);
+        editTextTime = (EditText)addNewPaymentView.findViewById(R.id.editText_time_of_event);
         textErrorMessage = (TextView)addNewPaymentView.findViewById(R.id.text_error_messge);
         imgExitFrag = (ImageView)addNewPaymentView.findViewById(R.id.img_exit_fragment);
 
+        methods = new AddAndEditMethods(getContext(),dbHandler,addNewPaymentView);
 
 
         // Create an ArrayAdapter using the string array and a default spinner
@@ -84,7 +89,14 @@ public class AddNewEventDialogFragment extends Fragment{
         editTextPaymentDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCalendarDialog();
+               methods.openCalendarDialog();
+            }
+        });
+
+        editTextTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               methods.openTimeDialog();
             }
         });
 
@@ -99,16 +111,24 @@ public class AddNewEventDialogFragment extends Fragment{
             public void onClick(View v) {
                 if(!areFieldsSet()){
                     errorMessageHandler("Please enter an event name",View.VISIBLE);
-                }  else if(doesNameExists(editTextPaymentName.getText().toString())){
+                }  else if(methods.doesNameExists(editTextPaymentName.getText().toString())){
                     errorMessageHandler("Event name exists, please choose a different one",View.VISIBLE);
                 }else{
                     textErrorMessage.setVisibility(View.INVISIBLE);
-                    Date date = ( getDateFromString ((editTextPaymentDate.getText().toString())));
+
+                    //combine time and date
+                    Date date = methods.mergeDateAndTime(methods.getDateFromString ((editTextPaymentDate.getText().toString())),
+                                                    methods.getTimeFromString(editTextTime.getText().toString()));
+
                     String paymentType = spinnerPaymentType.getSelectedItem().
                             toString().replace("event","").trim();
-                    EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
+                    CustomEventObject customEventObject = new CustomEventObject(editTextPaymentName.getText().toString()
                             ,date.getTime(),paymentType);
-                    saveEventToDatabase(eventObject);
+
+                  long id = saveEventToDatabase(customEventObject);
+                  setupNotification(customEventObject, 1);
+
+
                 }
 
             }
@@ -124,44 +144,9 @@ public class AddNewEventDialogFragment extends Fragment{
 
     }
 
-    private boolean saveEventToDatabase(EventObject eventObject){
-        //  Log.i("event: ", eventObjectForEditMode.toString());
-
-        dbHandler.addEvent(eventObject);
-
-        dbHandler.databaseToString();
-        return true;
-    }
-
-    private boolean doesNameExists(String nameOfPayment){
-        dbHandler = new DBHandler(getContext(),null, null, 1);
-        String s = dbHandler.databaseToString();
-        if(s.equals(nameOfPayment.trim())){
-            return true;
-        }
-        return false;
-    }
-
-
-
-
     private void errorMessageHandler(String msg, int visibility){
         textErrorMessage.setText(msg);
         textErrorMessage.setVisibility(visibility);
-    }
-
-    private Date getDateFromString(String d){
-
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-
-        try {
-            Date date = formatter.parse(d);
-            return date;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     //check if all input fields are filled/correct
@@ -172,35 +157,35 @@ public class AddNewEventDialogFragment extends Fragment{
         if(editTextPaymentDate.getText().toString().trim().length() <= 0){
             return false;
         }
+        if(editTextTime.getText().toString().trim().length() <= 0){
+            return false;
+        }
 
         return true;
     }
 
-    private void openCalendarDialog(){
+    public long saveEventToDatabase(CustomEventObject customEventObject){
+        long id = dbHandler.addEvent(customEventObject);
+        return id;
+    }
 
-        int mYear = 0;
-        int mMonth = 0;
-        int mDay = 0;
+    //set notification for this event
+    public void setupNotification(CustomEventObject e, long id){
 
-        DatePickerDialog dpd = new DatePickerDialog(getContext(),
-                new DatePickerDialog.OnDateSetListener() {
-                    final Calendar myCalendar = Calendar.getInstance();
-                    @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-                        // TODO Auto-generated method stub
-                        myCalendar.set(Calendar.YEAR, year);
-                        myCalendar.set(Calendar.MONTH, monthOfYear);
-                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        String myFormat = "MM-dd-yyyy";
-                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.clear();
 
-                        editTextPaymentDate.setText(sdf.format(myCalendar.getTime()));
+        cal.setTimeInMillis(e.getEventDate());
 
-                    }
-                }, mYear, mMonth, mDay);
-        dpd.getDatePicker().setMinDate(System.currentTimeMillis());
-        dpd.show();
+        CustomDateParser parser = new CustomDateParser(e.getEventDate());
+        parser.setDateAndTime();
+        String notificationContent = "Starts at "+parser.getTime();
+        CustomNotification notification = new CustomNotification(getContext(), e.getEventName(), notificationContent, 0,(int)id,cal.getTimeInMillis());
+        notification.setNotification();
+
+
+
 
     }
 

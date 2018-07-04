@@ -1,8 +1,11 @@
 package com.example.danny.paymentreminder;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -20,14 +24,19 @@ import com.example.danny.paymentreminder.fragment_activities.EventListFragment;
 import com.example.danny.paymentreminder.fragment_activities.FAQFragment;
 import com.example.danny.paymentreminder.fragment_activities.SettingsFragments;
 import com.example.danny.paymentreminder.fragment_activities.UpcomingEventsFragment;
+import com.example.danny.paymentreminder.notification_package.CustomNotification;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 import com.example.danny.paymentreminder.sqllite.UpdateDatabase;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     DBHandler dbHandler;
     UpdateDatabase updateDatabase;
     private int STORAGE_PERMISSION_CODE = 1;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -70,8 +79,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         resolvePermission();
         dbHandler = new DBHandler(getApplicationContext(),null,null, StaticVariables.VERSION);
+
         updateDatabase = new UpdateDatabase(getApplicationContext());
         updateDatabase.updateAllEvents();
 
@@ -131,5 +143,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 }

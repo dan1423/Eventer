@@ -12,7 +12,11 @@ import android.provider.Settings;
 import android.util.Log;
 
 import static android.content.Context.LOCATION_SERVICE;
-
+/*The purpose of this class is to get the current location of the phone
+* to get the current time. we do this beause the phone's time setting could be easily manipulated by the user.
+* This provides a more accurate time of the current loacation
+* Utilizes Google's location API
+ * */
 public class CustomLocationManager implements LocationListener {
 
     LocationManager lm;

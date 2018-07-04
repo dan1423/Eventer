@@ -2,6 +2,7 @@ package com.example.danny.paymentreminder.dialog_fragments;
 
 import android.app.DatePickerDialog;
 
+import android.app.TimePickerDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,10 +19,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import com.example.danny.paymentreminder.Custom_Classes.AddAndEditMethods;
 import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
-import com.example.danny.paymentreminder.adapter.EventObject;
 import com.example.danny.paymentreminder.R;
 
 import java.text.ParseException;
@@ -53,14 +56,15 @@ public class EditEventDialogFragment extends DialogFragment {
     private View addNewPaymentView;
     Spinner spinnerPaymentType;
     Button btnMain;
-    EditText editTextPaymentDate, editTextPaymentName;
+    EditText editTextPaymentDate, editTextPaymentName, editTextTime;
     TextView textErrorMessage;
     private ImageView imgExitFrag;
+    AddAndEditMethods methods;
 
     //initialize custom objects
     DBHandler dbHandler;
     Bundle bundle;
-    EventObject eventObjectForEditMode;
+    CustomEventObject customEventObjectForEditMode;
 
 
     @Override
@@ -73,7 +77,7 @@ public class EditEventDialogFragment extends DialogFragment {
         bundle = new Bundle();
         bundle = this.getArguments();
         if (bundle != null) {//only available when user wants to edit an event
-            eventObjectForEditMode = (EventObject) bundle.getSerializable("event_object");
+            customEventObjectForEditMode = (CustomEventObject) bundle.getSerializable("event_object");
         }
     }
 
@@ -86,8 +90,11 @@ public class EditEventDialogFragment extends DialogFragment {
         btnMain = (Button)addNewPaymentView.findViewById(R.id.button_add_new);
         editTextPaymentDate = (EditText)addNewPaymentView.findViewById(R.id.editText_date_of_event);
         editTextPaymentName = (EditText)addNewPaymentView.findViewById(R.id.editText_event_name);
+        editTextTime = (EditText)addNewPaymentView.findViewById(R.id.editText_time_of_event) ;
         textErrorMessage = (TextView)addNewPaymentView.findViewById(R.id.text_error_messge);
         imgExitFrag = (ImageView)addNewPaymentView.findViewById(R.id.img_exit_fragment);
+
+        methods = new AddAndEditMethods(getContext(),dbHandler,addNewPaymentView);
 
 
 
@@ -104,7 +111,13 @@ public class EditEventDialogFragment extends DialogFragment {
         editTextPaymentDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCalendarDialog();
+                methods.openCalendarDialog();
+            }
+        });
+        editTextTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                methods.openTimeDialog();
             }
         });
 
@@ -132,14 +145,17 @@ public class EditEventDialogFragment extends DialogFragment {
                     errorMessageHandler("Event name has to be  longer than 3 letters",View.VISIBLE);
                 }else{
                     errorMessageHandler("",View.INVISIBLE);
-                    Date date = ( getDateFromString ((editTextPaymentDate.getText().toString())));
+
+                    Date date = methods.mergeDateAndTime(methods.getDateFromString ((editTextPaymentDate.getText().toString())),
+                            methods.getTimeFromString(editTextTime.getText().toString()));
+
                     String paymentType = spinnerPaymentType.getSelectedItem().
                             toString().replace("event","").trim();
-                    EventObject eventObject = new EventObject(editTextPaymentName.getText().toString()
+                    CustomEventObject customEventObject = new CustomEventObject(editTextPaymentName.getText().toString()
                             ,date.getTime(),paymentType);
-                    eventObject.setEventId(eventObjectForEditMode.getEventId());
+                    customEventObject.setEventId(customEventObjectForEditMode.getEventId());
 
-                    updateEvent(eventObject);
+                    updateEvent(customEventObject);
 
                     showCheckMark();
 
@@ -164,12 +180,17 @@ public class EditEventDialogFragment extends DialogFragment {
 
     private void setEditFields(){
         btnMain.setText("Save Changes");
-        editTextPaymentName.setText(eventObjectForEditMode.getEventName());
-        long d = eventObjectForEditMode.getEventDate();
-        editTextPaymentDate.setText(new CustomDateParser(d).convertLongToDate());
+        editTextPaymentName.setText(customEventObjectForEditMode.getEventName());
 
 
-        int posOfType = getSpinnerSelectionId(eventObjectForEditMode.getEventType());
+        CustomDateParser parser = new CustomDateParser(customEventObjectForEditMode.getEventDate());
+        parser.setDateAndTime();
+        editTextPaymentDate.setText(parser.getDate());
+
+        editTextTime.setText(parser.getTime());
+
+
+        int posOfType = getSpinnerSelectionId(customEventObjectForEditMode.getEventType());
         if(posOfType != -1){
             spinnerPaymentType.setSelection(posOfType);
         }
@@ -194,8 +215,8 @@ public class EditEventDialogFragment extends DialogFragment {
         fm.popBackStack();
     }
 
-    private void updateEvent(EventObject eventObject){
-        dbHandler.updateEvent(eventObject);
+    private void updateEvent(CustomEventObject customEventObject){
+        dbHandler.updateEvent(customEventObject);
     }
 
 
@@ -209,19 +230,6 @@ public class EditEventDialogFragment extends DialogFragment {
         dialogs.confirmationDialog();
     }
 
-    private Date getDateFromString(String d){
-
-        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
-
-        try {
-            Date date = formatter.parse(d);
-            return date;
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     //check if all input fields are filled/correct
     private boolean areFieldsSet(){
@@ -235,32 +243,7 @@ public class EditEventDialogFragment extends DialogFragment {
         return true;
     }
 
-    private void openCalendarDialog(){
 
-        int mYear = 0;
-        int mMonth = 0;
-        int mDay = 0;
 
-        DatePickerDialog dpd = new DatePickerDialog(getContext(),
-                new DatePickerDialog.OnDateSetListener() {
-                    final Calendar myCalendar = Calendar.getInstance();
-                    @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-                        // TODO Auto-generated method stub
-                        myCalendar.set(Calendar.YEAR, year);
-                        myCalendar.set(Calendar.MONTH, monthOfYear);
-                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        String myFormat = "MM-dd-yyyy";
-                        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-                        editTextPaymentDate.setText(sdf.format(myCalendar.getTime()));
-
-                    }
-                }, mYear, mMonth, mDay);
-        dpd.getDatePicker().setMinDate(System.currentTimeMillis());
-        dpd.show();
-
-    }
 
 }

@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.example.danny.paymentreminder.Custom_Classes.CSVExporter;
 import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
-import com.example.danny.paymentreminder.adapter.EventObject;
 import com.example.danny.paymentreminder.R;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class SettingsFragments extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         settingsView = inflater.inflate(R.layout.layout_for_settings_fragment, null, false);
-        btnDeleteAllEvents = (Button)settingsView.findViewById(R.id.btn_delete_events);
+        btnDeleteAllEvents = (Button)settingsView.findViewById(R.id.btn_notification_settings);
         btnExportEvents  = (Button)settingsView.findViewById(R.id.btn_export_events);
 
         btnExportEvents.setOnClickListener(new View.OnClickListener(){
@@ -54,7 +54,7 @@ public class SettingsFragments extends Fragment {
         btnDeleteAllEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDeleteConfirmationDialog();
+                //showDeleteConfirmationDialog();
             }
         });
         return settingsView;
@@ -139,26 +139,29 @@ public class SettingsFragments extends Fragment {
 
     private void startExport(String email){
         DBHandler dbHandler = new DBHandler(getContext(),null, null, 1);
-        ArrayList<EventObject> eventObjects = dbHandler.queryAllEvents();
-        String csv = buildCSV(eventObjects);
+        ArrayList<CustomEventObject> customEventObjects = dbHandler.queryAllEvents();
+        String csv = buildCSV(customEventObjects);
         CSVExporter csvExporter = new CSVExporter(getContext(), csv,email);
         csvExporter.exportToEmail();
     }
 
-    private String buildCSV(ArrayList<EventObject> eventObjects){
-       StringBuilder builder = new StringBuilder("Event,Date,Event-Type\n");
+    private String buildCSV(ArrayList<CustomEventObject> customEventObjects){
+       StringBuilder builder = new StringBuilder("Event,Date,Time,Event-Type\n");
        CustomDateParser parser;
 
-       for(int i = 0; i < eventObjects.size(); i++){
-           String eventName = eventObjects.get(i).getEventName();
+       for(int i = 0; i < customEventObjects.size(); i++){
+           String eventName = customEventObjects.get(i).getEventName();
 
-            parser = new  CustomDateParser(eventObjects.get(i).getEventDate());
+            parser = new  CustomDateParser(customEventObjects.get(i).getEventDate());
+            parser.setDateAndTime();
 
-            String eventDate = parser.convertLongToDate();
+            String eventDate = parser.getDate();
 
-            String eventType = eventObjects.get(i).getEventType();
+            String eventTime = parser.getTime();
 
-            builder.append(eventName +","+eventDate+","+eventType+"\n");
+            String eventType = customEventObjects.get(i).getEventType();
+
+            builder.append(eventName +","+eventDate+","+eventTime+","+eventType+"\n");
 
        }
 
@@ -166,7 +169,7 @@ public class SettingsFragments extends Fragment {
 
     }
 
-    private void showDeleteConfirmationDialog(){
+    /*private void showDeleteConfirmationDialog(){
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),android.R.style.Theme_DeviceDefault_Light_Dialog_MinWidth);
         // Get the layout inflater
@@ -202,7 +205,7 @@ public class SettingsFragments extends Fragment {
     private void deleteAllEvents(){
         DBHandler dbHandler = new DBHandler(getContext(), null,null,1);
         dbHandler.clearTable();
-    }
+    }*/
 
    /* private String getRecentEmail(){
         SharedPreferences prefs = getContext().getSharedPreferences("emailSuggestion", MODE_PRIVATE);

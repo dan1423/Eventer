@@ -1,29 +1,28 @@
 package com.example.danny.paymentreminder.fragment_activities;
 
+import android.content.ClipData;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.danny.paymentreminder.Custom_Classes.CustomClickListener;
 import com.example.danny.paymentreminder.Custom_Classes.CustomLocationManager;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
+import com.example.danny.paymentreminder.adapter.CustomEventObjectAdapter;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
-import com.example.danny.paymentreminder.adapter.EventObject;
-import com.example.danny.paymentreminder.adapter.EventObjectAdapter;
 import com.example.danny.paymentreminder.R;
 import com.example.danny.paymentreminder.StaticVariables;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-
-import static android.graphics.drawable.ClipDrawable.HORIZONTAL;
 
 public class UpcomingEventsFragment extends Fragment {
 
@@ -35,7 +34,7 @@ public class UpcomingEventsFragment extends Fragment {
     DBHandler dbHandler;
     Date currentDate;
     RecyclerView recyclerView;
-    ArrayList<EventObject> eventObjects;
+    ArrayList<CustomEventObject> customEventObjects;
 
 
     @Override
@@ -52,21 +51,20 @@ public class UpcomingEventsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         upcomingView = inflater.inflate(R.layout.layout_for_upcoming_fragments,null,false);
 
-        eventObjects = dbHandler.queryAllEvents();
-        eventObjects = getUpcomingEventsInTheCurrentMonth(eventObjects, currentDate);
+        customEventObjects = dbHandler.queryAllEvents();
+        customEventObjects = getUpcomingEventsInTheCurrentMonth(customEventObjects, currentDate);
 
-        if(eventObjects.isEmpty()){
+        if(customEventObjects.isEmpty()){
            upcomingView =  inflater.inflate(R.layout.not_available_layout,null,false);
            return upcomingView;
         }
 
         recyclerView = (RecyclerView)upcomingView.findViewById(R.id.recycler_view_for_upcoming_events);
-       // EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects);
-        EventObjectAdapter adapter = new EventObjectAdapter(getContext(), eventObjects, new CustomClickListener() {
+        CustomEventObjectAdapter adapter = new CustomEventObjectAdapter(getContext(), customEventObjects, new CustomClickListener() {
 
             @Override
             public void onDeleteClick(int pos) {
-                //sendToDetailedEvent(eventObjects.get(pos));
+                //sendToDetailedEvent(customEventObjects.get(pos));
             }
 
             @Override
@@ -82,10 +80,8 @@ public class UpcomingEventsFragment extends Fragment {
 
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-      /*  DividerItemDecoration itemDecor = new DividerItemDecoration(getContext(), HORIZONTAL);
-        recyclerView.addItemDecoration(itemDecor);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));*/
 
 
         return upcomingView;
@@ -97,15 +93,15 @@ public class UpcomingEventsFragment extends Fragment {
      if the event date is not in the same months as present day, it is discarded
      if event is older than present date, it is also discarded
      */
-    private ArrayList<EventObject> getUpcomingEventsInTheCurrentMonth
-                                    (ArrayList<EventObject> eventObjects1, Date currentDate){
-        Iterator<EventObject> it = eventObjects1.iterator();
+    private ArrayList<CustomEventObject> getUpcomingEventsInTheCurrentMonth
+                                    (ArrayList<CustomEventObject> customEventObjects1, Date currentDate){
+        Iterator<CustomEventObject> it = customEventObjects1.iterator();
         while(it.hasNext()){
             if(isDateAnUpcomingEventInCurrentMonth(currentDate,new Date(it.next().getEventDate())) == false ){
                it.remove();
             }
         }
-        return eventObjects1;
+        return customEventObjects1;
     }
 
     private boolean isDateAnUpcomingEventInCurrentMonth(Date currentDate, Date dateOfEvent){

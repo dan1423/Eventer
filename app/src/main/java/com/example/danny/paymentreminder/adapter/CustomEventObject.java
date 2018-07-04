@@ -3,14 +3,19 @@ package com.example.danny.paymentreminder.adapter;
 import java.io.Serializable;
 import java.util.Date;
 
-public class EventObject implements Serializable{
+/*This calss is used to populate recyclerview
+* it is used as a model for the sqlite database
+* it implements serilizable so we can pass it from one fragment(oractivity) to another
+* */
+public class CustomEventObject implements Serializable{
 
     String eventName;
     long eventDate;
+    long eventTime;
    String eventType;
-   private int eventId;
+   private int eventId;//used to uniquely identify event and to set request code of event
 
-    public EventObject(String eventName, long eventDate, String eventType) {
+    public CustomEventObject(String eventName, long eventDate, String eventType) {
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.eventType = eventType;
@@ -32,6 +37,14 @@ public class EventObject implements Serializable{
         this.eventDate = eventDate;
     }
 
+    public long getEventTime() {
+        return eventTime;
+    }
+
+    public void setEventTime(long eventTime) {
+        this.eventTime = eventTime;
+    }
+
     public String getEventType() {
         return eventType;
     }
@@ -50,7 +63,7 @@ public class EventObject implements Serializable{
 
     @Override
     public String toString() {
-        return "EventObject{" +
+        return "CustomEventObject{" +
                 "eventName='" + eventName + '\'' +
                 ", eventDate=" + eventDate +
                 ", eventType='" + eventType + '\'' +

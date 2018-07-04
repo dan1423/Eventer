@@ -3,7 +3,7 @@ package com.example.danny.paymentreminder.sqllite;
 import android.content.Context;
 
 import com.example.danny.paymentreminder.Custom_Classes.CustomLocationManager;
-import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
 import com.example.danny.paymentreminder.StaticVariables;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ public class UpdateDatabase {
     private Date currentDate;
     private CustomLocationManager locationManager;
     private Context context;
-    private ArrayList<EventObject> eventObjects;
+    private ArrayList<CustomEventObject> customEventObjects;
     DBHandler dbHandler;
 
 
@@ -29,13 +29,13 @@ public class UpdateDatabase {
         locationManager = new CustomLocationManager(context);
         currentDate = new Date(locationManager.currentTime());
         dbHandler = new DBHandler(context,null,null, StaticVariables.VERSION);
-        eventObjects = dbHandler.queryAllEvents();
+        customEventObjects = dbHandler.queryAllEvents();
 
     }
 
     public void updateAllEvents(){
         dbHandler.clearTable();
-        updateEvents(this.eventObjects);
+        updateEvents(this.customEventObjects);
 
     }
 
@@ -68,10 +68,10 @@ public class UpdateDatabase {
 
 
 
-    private void updateEvents(ArrayList<EventObject> eventObjects){
-        Iterator<EventObject> iterator = eventObjects.iterator();
+    private void updateEvents(ArrayList<CustomEventObject> customEventObjects){
+        Iterator<CustomEventObject> iterator = customEventObjects.iterator();
         while(iterator.hasNext()){
-            EventObject event = iterator.next();
+            CustomEventObject event = iterator.next();
             Date eventDate = new Date(event.getEventDate());
             String eventType = event.getEventType();
 
@@ -89,7 +89,7 @@ public class UpdateDatabase {
                }
             }
         }
-        dbHandler.addMultipleEvents(eventObjects);
+        dbHandler.addMultipleEvents(customEventObjects);
     }
 
     private boolean isSameDay(Date d1, Date d2){

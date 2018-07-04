@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.danny.paymentreminder.adapter.EventObject;
+import com.example.danny.paymentreminder.adapter.CustomEventObject;
 
 import java.util.ArrayList;
 
@@ -19,6 +19,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String COLUMN_EVENTNAME = "event_name";
     private static final String COLUMN_EVENTTYPE = "event_type";
     private static final String COLUMN_EVENTDATE = "event_date";
+   
 
 
 
@@ -45,32 +46,34 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     //Add a new row to the database
-    public void addEvent(EventObject eventObject){
+    public long addEvent(CustomEventObject customEventObject){
         ContentValues values = new ContentValues();
-        values.put(COLUMN_EVENTNAME, eventObject.getEventName());
-        values.put(COLUMN_EVENTTYPE, eventObject.getEventType()+"");
-        values.put(COLUMN_EVENTDATE, eventObject.getEventDate()+"");
+        values.put(COLUMN_EVENTNAME, customEventObject.getEventName());
+        values.put(COLUMN_EVENTTYPE, customEventObject.getEventType()+"");
+        values.put(COLUMN_EVENTDATE, customEventObject.getEventDate()+"");
         SQLiteDatabase db = getWritableDatabase();
-        db.insert(TABLE_EVENTS, null, values);
+       long insertedId =  db.insert(TABLE_EVENTS, null, values);
         db.close();
+
+        return insertedId;
     }
 
-    public void addMultipleEvents(ArrayList<EventObject> eventObjects){
-        if(eventObjects.isEmpty()){
+    public void addMultipleEvents(ArrayList<CustomEventObject> customEventObjects){
+        if(customEventObjects.isEmpty()){
             return;
         }
-        String eventName = eventObjects.get(0).getEventName();
-        String eventType = eventObjects.get(0).getEventType();
-        String eventDate = eventObjects.get(0).getEventDate()+"";
+        String eventName = customEventObjects.get(0).getEventName();
+        String eventType = customEventObjects.get(0).getEventType();
+        String eventDate = customEventObjects.get(0).getEventDate()+"";
        String queryString =  "INSERT INTO "+ TABLE_EVENTS+"(event_name,event_type,event_date)"+
                             " SELECT '"+eventName+ "' AS "+ COLUMN_EVENTNAME+ ", '"+
                             eventType + "' AS "+ COLUMN_EVENTTYPE+ ", '"+
                             eventDate + "' AS " + COLUMN_EVENTDATE;
 
-        for(int i = 1; i < eventObjects.size(); i++){
-            eventName = eventObjects.get(i).getEventName();
-            eventType = eventObjects.get(i).getEventType();
-            eventDate = eventObjects.get(i).getEventDate()+"";
+        for(int i = 1; i < customEventObjects.size(); i++){
+            eventName = customEventObjects.get(i).getEventName();
+            eventType = customEventObjects.get(i).getEventType();
+            eventDate = customEventObjects.get(i).getEventDate()+"";
 
            queryString +=   " UNION ALL SELECT '"+ eventName +"','"+eventType+"','"+eventDate +"'";
 
@@ -110,10 +113,10 @@ public class DBHandler extends SQLiteOpenHelper {
         return dbString;
     }
 
-    //we will get rows from database and convert to EventObject to save to arraylist
-    public ArrayList<EventObject> queryAllEvents(){
+    //we will get rows from database and convert to CustomEventObject to save to arraylist
+    public ArrayList<CustomEventObject> queryAllEvents(){
 
-        ArrayList<EventObject> eventObjects = new ArrayList<>();
+        ArrayList<CustomEventObject> customEventObjects = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_EVENTS ;// why not leave out the WHERE  clause?
 
@@ -127,36 +130,36 @@ public class DBHandler extends SQLiteOpenHelper {
             // null could happen if we used our empty constructor
             if (recordSet.getString(recordSet.getColumnIndex("event_name")) != null) {
 
-                EventObject eventObject = new EventObject(
+                CustomEventObject customEventObject = new CustomEventObject(
                         recordSet.getString(recordSet.getColumnIndex("event_name")),
                         Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date"))),//convert string to long
                         recordSet.getString(recordSet.getColumnIndex("event_type")) );
 
-                eventObject.setEventId(Integer.parseInt(recordSet.getString(recordSet.getColumnIndex("event_id"))));
+                customEventObject.setEventId(Integer.parseInt(recordSet.getString(recordSet.getColumnIndex("event_id"))));
 
-                eventObjects.add(eventObject);
+                customEventObjects.add(customEventObject);
             }
             recordSet.moveToNext();
         }
         db.close();
 
-        return eventObjects;
+        return customEventObjects;
 
     }
 
-    public void updateEvent(EventObject eventObject){
+    public void updateEvent(CustomEventObject customEventObject){
         String query = "UPDATE "+ TABLE_EVENTS +
-        " SET event_name = '" +eventObject.getEventName() +"', "
-                +"event_type = '"+eventObject.getEventType()+"', "
-                +"event_date = '"+eventObject.getEventDate()+
-        "' WHERE event_id =  " + eventObject.getEventId();
+        " SET event_name = '" + customEventObject.getEventName() +"', "
+                +"event_type = '"+ customEventObject.getEventType()+"', "
+                +"event_date = '"+ customEventObject.getEventDate()+
+        "' WHERE event_id =  " + customEventObject.getEventId();
 
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
     }
 
-    public void deleteEvent(EventObject eventObject){
-        String query = "DELETE FROM "+TABLE_EVENTS +" WHERE event_id = "+eventObject.getEventId();
+    public void deleteEvent(CustomEventObject customEventObject){
+        String query = "DELETE FROM "+TABLE_EVENTS +" WHERE event_id = "+ customEventObject.getEventId();
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(query);
 
@@ -168,6 +171,8 @@ public class DBHandler extends SQLiteOpenHelper {
         db.execSQL("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME = '" + TABLE_EVENTS +"'");
 
     }
+
+
 
 
 }
