@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
         resolvePermission();
         dbHandler = new DBHandler(getApplicationContext(),null,null, StaticVariables.VERSION);
-
         updateDatabase = new UpdateDatabase(getApplicationContext());
         updateDatabase.updateAllEvents();
 

@@ -1,21 +1,29 @@
 package com.example.danny.paymentreminder.fragment_activities;
 
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.example.danny.paymentreminder.Custom_Classes.CustomClickListener;
 import com.example.danny.paymentreminder.Custom_Classes.CustomLocationManager;
 import com.example.danny.paymentreminder.adapter.CustomEventObject;
 import com.example.danny.paymentreminder.adapter.CustomEventObjectAdapter;
+import com.example.danny.paymentreminder.dialog_fragments.CustomAlertDialogs;
+import com.example.danny.paymentreminder.dialog_fragments.EditEventDialogFragment;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 import com.example.danny.paymentreminder.R;
 import com.example.danny.paymentreminder.StaticVariables;
@@ -35,6 +43,7 @@ public class UpcomingEventsFragment extends Fragment {
     Date currentDate;
     RecyclerView recyclerView;
     ArrayList<CustomEventObject> customEventObjects;
+    CustomEventObjectAdapter adapter;
 
 
     @Override
@@ -44,6 +53,7 @@ public class UpcomingEventsFragment extends Fragment {
         long l = customLocationManager.currentTime();
        currentDate = new Date(l);
         dbHandler = new DBHandler(getContext(),null,null, StaticVariables.VERSION);
+
     }
 
     @Nullable
@@ -60,26 +70,29 @@ public class UpcomingEventsFragment extends Fragment {
         }
 
         recyclerView = (RecyclerView)upcomingView.findViewById(R.id.recycler_view_for_upcoming_events);
-        CustomEventObjectAdapter adapter = new CustomEventObjectAdapter(getContext(), customEventObjects, new CustomClickListener() {
+        adapter = new CustomEventObjectAdapter(getContext(), customEventObjects, new CustomClickListener() {
 
             @Override
             public void onDeleteClick(int pos) {
-                //sendToDetailedEvent(customEventObjects.get(pos));
+                openCannoDeleteDialog();
             }
 
             @Override
             public void onEditClick(int pos) {
-               // showDeleteConfirmationDialog();
+              openCannotEditDialog();
             }
 
             @Override
             public void onInfoClick(int pos) {
-
+                showEventDetails(pos);
             }
         });
 
+
+
         //setting adapter to recyclerview
         recyclerView.setAdapter(adapter);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
@@ -112,6 +125,42 @@ public class UpcomingEventsFragment extends Fragment {
            return false;
        }
        return true;
+    }
+
+
+
+    private void openCannotEditDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Note");
+        alertDialog.setMessage("You cannot edit from this menu, Edit from main menu");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+    private void openCannoDeleteDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Note");
+        alertDialog.setMessage("You cannot delete from this menu, Delete from main menu");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
+
+
+
+    private void showEventDetails(int pos){
+        CustomAlertDialogs dialogs = new CustomAlertDialogs(getActivity());
+        dialogs.showEventDetails(customEventObjects.get(pos));
     }
 
 

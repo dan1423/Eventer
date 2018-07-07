@@ -40,14 +40,10 @@ public class CustomAlertDialogs {
         eventName.setText(customEventObject.getEventName());
 
         CustomDateParser parser = new CustomDateParser(customEventObject.getEventDate());
-        parser.setDateAndTime();
+         parser.setDateAndTime();
+        eventDate.setText("Event on "+ parser.getDate() + " at "+parser.getTime());
 
-        String date = parser.getDate();
-        String time = parser.getTime();
-
-        eventDate.setText("On "+date + " at "+time);
-
-        eventType.setText(customEventObject.getEventType());
+        eventType.setText("This is a "+customEventObject.getEventType() +" event");
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override

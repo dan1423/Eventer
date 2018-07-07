@@ -21,6 +21,7 @@ public class CustomEventObjectAdapter extends RecyclerView.Adapter<CustomEventOb
    private List<CustomEventObject> customEventObjects;
     public CustomClickListener listener;
 
+
     //accompanying the usal recyclerview adapter, we add a custom click listener interface
     public CustomEventObjectAdapter(Context context, List<CustomEventObject> customEventObjects, CustomClickListener listener) {
         this.context = context;
@@ -48,7 +49,7 @@ public class CustomEventObjectAdapter extends RecyclerView.Adapter<CustomEventOb
         CustomDateParser dateParser = setDateAndTime(customEventObject.getEventDate());
 
         holder.txtEventName.setText(stringShortener(customEventObject.getEventName()));
-        holder.txtEventType.setText(customEventObject.getEventType()+ " event");
+        holder.txtEventType.setText("This is a "+customEventObject.getEventType()+ " event");
         holder.txtEventDate.setText("On " + dateParser.getDate() +"At "+dateParser.getTime());
 
 

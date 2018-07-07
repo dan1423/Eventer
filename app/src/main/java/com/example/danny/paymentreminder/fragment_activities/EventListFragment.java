@@ -25,6 +25,7 @@ import com.example.danny.paymentreminder.adapter.CustomEventObjectAdapter;
 import com.example.danny.paymentreminder.dialog_fragments.AddNewEventDialogFragment;
 import com.example.danny.paymentreminder.dialog_fragments.CustomAlertDialogs;
 import com.example.danny.paymentreminder.dialog_fragments.EditEventDialogFragment;
+import com.example.danny.paymentreminder.notification_package.CustomNotification;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 import com.example.danny.paymentreminder.R;
 import com.example.danny.paymentreminder.StaticVariables;
@@ -157,7 +158,6 @@ public class EventListFragment extends Fragment {
 
     private void refreshList(){
         adapter.notifyDataSetChanged();
-        recyclerView.scrollToPosition(0);
 
     }
 
@@ -223,16 +223,21 @@ public class EventListFragment extends Fragment {
                 d.dismiss();
             }
         });
-
         builder.create();
     }
 
     private void deleteEvent( int pos){
         DBHandler dbHandler = new DBHandler(getContext(), null, null, 1);
         dbHandler.deleteEvent(customEventObjects.get(pos));
+        deleteEventNotification(pos);
         customEventObjects.remove(pos);
         adapter.notifyItemRemoved(pos);
         adapter.notifyItemRangeChanged(pos, customEventObjects.size());
+    }
+
+    private void deleteEventNotification(int pos){
+        CustomNotification notification = new CustomNotification(getContext(),customEventObjects.get(pos).getEventId());
+        notification.removeNotification();
     }
 
     private void showEventDetails(int pos){

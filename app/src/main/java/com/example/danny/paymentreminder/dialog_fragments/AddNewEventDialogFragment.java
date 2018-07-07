@@ -1,7 +1,5 @@
 package com.example.danny.paymentreminder.dialog_fragments;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,12 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.example.danny.paymentreminder.Custom_Classes.AddAndEditMethods;
 import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
@@ -27,11 +23,8 @@ import com.example.danny.paymentreminder.adapter.CustomEventObject;
 import com.example.danny.paymentreminder.notification_package.CustomNotification;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class AddNewEventDialogFragment extends Fragment{
 
@@ -42,7 +35,7 @@ public class AddNewEventDialogFragment extends Fragment{
     //initialize views
     private View addNewPaymentView;
     Spinner spinnerPaymentType;
-    Button btnMain;
+    Button btnAdd;
     EditText editTextPaymentDate, editTextPaymentName,editTextTime;
     TextView textErrorMessage;
     private ImageView imgExitFrag;
@@ -66,7 +59,7 @@ public class AddNewEventDialogFragment extends Fragment{
 
         addNewPaymentView = inflater.inflate(R.layout.layout_for_add_event,container,false);
         spinnerPaymentType = (Spinner)addNewPaymentView.findViewById(R.id.spinner_event_type);
-        btnMain = (Button)addNewPaymentView.findViewById(R.id.button_add_new);
+        btnAdd = (Button)addNewPaymentView.findViewById(R.id.button_add_new);
         editTextPaymentDate = (EditText)addNewPaymentView.findViewById(R.id.editText_date_of_event);
         editTextPaymentName = (EditText)addNewPaymentView.findViewById(R.id.editText_event_name);
         editTextTime = (EditText)addNewPaymentView.findViewById(R.id.editText_time_of_event);
@@ -106,7 +99,7 @@ public class AddNewEventDialogFragment extends Fragment{
     }
 
     private  void setLayoutEvents(){
-        btnMain.setOnClickListener(new View.OnClickListener() {
+        btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!areFieldsSet()){
@@ -126,9 +119,8 @@ public class AddNewEventDialogFragment extends Fragment{
                             ,date.getTime(),paymentType);
 
                   long id = saveEventToDatabase(customEventObject);
-                  setupNotification(customEventObject, 1);
-
-
+                  setupNotification(customEventObject, id);
+                  exitAddDialog();
                 }
 
             }
@@ -137,11 +129,15 @@ public class AddNewEventDialogFragment extends Fragment{
         imgExitFrag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fm = getFragmentManager();
-                fm.popBackStack();
+               exitAddDialog();
             }
         });
 
+    }
+
+    private void exitAddDialog(){
+        FragmentManager fm = getFragmentManager();
+        fm.popBackStack();
     }
 
     private void errorMessageHandler(String msg, int visibility){
@@ -171,21 +167,19 @@ public class AddNewEventDialogFragment extends Fragment{
 
     //set notification for this event
     public void setupNotification(CustomEventObject e, long id){
-
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.clear();
 
         cal.setTimeInMillis(e.getEventDate());
-
+        int notId = (int)id;
         CustomDateParser parser = new CustomDateParser(e.getEventDate());
         parser.setDateAndTime();
         String notificationContent = "Starts at "+parser.getTime();
-        CustomNotification notification = new CustomNotification(getContext(), e.getEventName(), notificationContent, 0,(int)id,cal.getTimeInMillis());
+        CustomNotification notification = new CustomNotification(getContext(), e.getEventName(),
+                                                notificationContent, notId,notId,cal.getTimeInMillis());
         notification.setNotification();
-
-
-
+        Log.i("CUSTOM",notification.toString());
 
     }
 

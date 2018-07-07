@@ -11,7 +11,6 @@ import android.widget.TimePicker;
 
 import com.example.danny.paymentreminder.R;
 import com.example.danny.paymentreminder.adapter.CustomEventObject;
-import com.example.danny.paymentreminder.notification_package.CustomNotification;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 
 import java.text.ParseException;
@@ -46,7 +45,14 @@ public class AddAndEditMethods {
         return false;
     }
 
+    public boolean saveEventToDatabase(CustomEventObject customEventObject){
+        //  Log.i("event: ", customEventObjectForEditMode.toString());
 
+        dbHandler.addEvent(customEventObject);
+
+        dbHandler.databaseToString();
+        return true;
+    }
 
     public Date getDateFromString(String d){
 
@@ -138,6 +144,9 @@ public class AddAndEditMethods {
         return date;
     }
 
+    //set noti
+    public void setupNotification(){
 
+    }
 
 }

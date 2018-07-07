@@ -4,6 +4,8 @@ package com.example.danny.paymentreminder.fragment_activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.example.danny.paymentreminder.Custom_Classes.CSVExporter;
 import com.example.danny.paymentreminder.Custom_Classes.CustomDateParser;
 import com.example.danny.paymentreminder.adapter.CustomEventObject;
+import com.example.danny.paymentreminder.dialog_fragments.NotificationSettings;
 import com.example.danny.paymentreminder.sqllite.DBHandler;
 import com.example.danny.paymentreminder.R;
 
@@ -29,7 +32,7 @@ public class SettingsFragments extends Fragment {
     }
 
     private View settingsView;
-    Button btnDeleteAllEvents, btnExportEvents ;
+    Button btnShowNotificationSettings, btnExportEvents ;
    // private static boolean isThereAnEmailSuggestion = false;
 
     @Override
@@ -41,7 +44,7 @@ public class SettingsFragments extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         settingsView = inflater.inflate(R.layout.layout_for_settings_fragment, null, false);
-        btnDeleteAllEvents = (Button)settingsView.findViewById(R.id.btn_notification_settings);
+        btnShowNotificationSettings = (Button)settingsView.findViewById(R.id.btn_notification_settings);
         btnExportEvents  = (Button)settingsView.findViewById(R.id.btn_export_events);
 
         btnExportEvents.setOnClickListener(new View.OnClickListener(){
@@ -51,10 +54,10 @@ public class SettingsFragments extends Fragment {
             }
         });
 
-        btnDeleteAllEvents.setOnClickListener(new View.OnClickListener() {
+        btnShowNotificationSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //showDeleteConfirmationDialog();
+               openNotificationSettings();
             }
         });
         return settingsView;
@@ -221,4 +224,17 @@ public class SettingsFragments extends Fragment {
         editor.putString("email", email);
         editor.apply();
     }*/
+
+   private void openNotificationSettings(){
+       Fragment fragment = new NotificationSettings();
+       FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+       FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+       fragmentTransaction .setCustomAnimations(R.anim.grow_from_center, R.anim.blank,
+               R.anim.blank, R.anim.shrink_to_center);
+       fragmentTransaction.replace(R.id.main_layout_screen_bottom_nav,fragment);
+       fragmentTransaction.addToBackStack(null);
+
+
+       fragmentTransaction.commit();
+   }
 }

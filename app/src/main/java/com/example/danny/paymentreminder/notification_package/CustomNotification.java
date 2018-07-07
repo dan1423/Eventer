@@ -72,20 +72,11 @@ public class CustomNotification {
         notificationIntent.putExtra(CustomReciever.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //Date now = new Date(timeInMillis);
-
-        //long dateInMinutes =  now.getTime()/ 60000;
         long dd =  (timeInMillis/60000) - (Calendar.getInstance().getTimeInMillis()/60000) ;
-       long futureInMillis = SystemClock.elapsedRealtime() +(dd *60000) ;
-
-
-
+        long futureInMillis = SystemClock.elapsedRealtime() +(dd *60000) ;
 
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-
-        Log.d("CURRENT_DATE_CN",dd+"");
-
 
     }
 
@@ -97,6 +88,19 @@ public class CustomNotification {
         return builder.build();
     }
 
+
+
+    @Override
+    public String toString() {
+        return "CustomNotification{" +
+                "context=" + context +
+                ", notificationTitle='" + notificationTitle + '\'' +
+                ", notificationContent='" + notificationContent + '\'' +
+                ", notId=" + notId +
+                ", requestCode=" + requestCode +
+                ", timeInMillis=" + timeInMillis +
+                '}';
+    }
 }
 
 
