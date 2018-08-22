@@ -41,7 +41,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCk17OUrMOH1H00_HILd-VOhNu9gF7W8kU" />
+            android:value="@string/google_drive_api" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

@@ -21,7 +21,7 @@
     <string name="faq_3">Where do I get the template to create events</string>
     <string name="faq_4"><u>Questions? email developer</u></string>
 
-    <string name="google_drive_api">AIzaSyCk17OUrMOH1H00_HILd-VOhNu9gF7W8kU</string>
+    
 
     <string-array name="event_type_array">
         <item>One-time event</item>
