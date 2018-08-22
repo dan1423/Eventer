@@ -10,6 +10,8 @@
         android:id="@+id/recycler_view_for_upcoming_events"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
 
         />
 </android.widget.LinearLayout>

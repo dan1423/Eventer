@@ -3,6 +3,14 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="pink">#ff69b4</color>
     <color name="red">#ff0000</color>
     <color name="green">#00cc00</color>
+    <color name="yellow">#ffff00</color>
+    <color name="blue">#0040ff</color>
+    <color name="purple">#551a8b</color>
+    <color name="silver">#c0c0c0</color>
+    <color name="eggshell">#f0ead6</color>
+    <color name="dark_green">#006400</color>
+    <color name="light_green_tint">#b2d0b2</color>
 </resources>

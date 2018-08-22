@@ -1,41 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btn_export_events"
-        android:layout_width="295dp"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="120dp"
-        android:text="Export events"
+        android:layout_marginTop="88dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.46"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/btn_notification_settings"
-        android:layout_width="291dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
+
+        <Button
+            android:id="@+id/btn_notification_settings"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:text="NOTIFICATION SETTINGS" />
+
+        <Button
+            android:id="@+id/btn_google_drive_settings"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:text="GOOGLE DRIVE SETTINGS" />
+
+        <Button
+            android:id="@+id/btn_import_events"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:text="IMPORT EVENTS"
+            tools:layout_editor_absoluteX="146dp"
+            tools:layout_editor_absoluteY="281dp" />
+
+        <Button
+            android:id="@+id/btn_export_events"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:text="EXPORT EVENTS" />
+
+        <Button
+            android:id="@+id/btn_delete_all_events"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:text="DELETE ALL EVENTS"
+            android:textColor="@color/red" />
+
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/settings_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="9dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Notification settings"
+        android:indeterminate="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_export_events"
-        app:layout_constraintVertical_bias="0.078" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        android:visibility="invisible"/>
 
 </android.support.constraint.ConstraintLayout>
