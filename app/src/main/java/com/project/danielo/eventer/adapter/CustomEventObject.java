@@ -13,12 +13,14 @@ public class CustomEventObject implements Serializable{
     long eventDate;
     long eventTime;
    String eventType;
+   String eventNote;
    private int eventId;//eventId is used to uniquely identify event and to set request code of event
 
-    public CustomEventObject(String eventName, long eventDate, String eventType) {
+    public CustomEventObject(String eventName, long eventDate, String eventType, String eventNote) {
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.eventType = eventType;
+        this.eventNote = eventNote;
     }
 
     public String getEventName() {
@@ -61,12 +63,22 @@ public class CustomEventObject implements Serializable{
         this.eventId = eventId;
     }
 
+    public String getEventNote() {
+        return eventNote;
+    }
+
+    public void setEventNote(String eventNote) {
+        this.eventNote = eventNote;
+    }
+
     @Override
     public String toString() {
         return "CustomEventObject{" +
                 "eventName='" + eventName + '\'' +
                 ", eventDate=" + eventDate +
+                ", eventTime=" + eventTime +
                 ", eventType='" + eventType + '\'' +
+                ", eventNote='" + eventNote + '\'' +
                 ", eventId=" + eventId +
                 '}';
     }

@@ -53,7 +53,7 @@ public class CustomEventObjectAdapter extends RecyclerView.Adapter<CustomEventOb
 
         holder.txtEventName.setText(stringShortener(customEventObject.getEventName()));
         holder.txtEventType.setText(customEventObject.getEventType().toLowerCase()+ " event");
-        holder.txtEventDate.setText("On " + dateParser.getDate() +"at "+dateParser.getTime());
+        holder.txtEventDate.setText("On " + dateParser.getDate().trim() +" at "+dateParser.getTime());
 
         String eventType = customEventObject.getEventType().toLowerCase();
         eventType =  eventType.replace("event","").trim();

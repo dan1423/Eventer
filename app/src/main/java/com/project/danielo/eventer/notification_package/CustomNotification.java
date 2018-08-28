@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.project.danielo.eventer.MainActivity;
 import com.project.danielo.eventer.R;
 
 import java.util.Calendar;
@@ -75,6 +76,7 @@ public class CustomNotification {
         notificationIntent.putExtra(CustomReciever.NOTIFICATION_TAG, tag);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+
         long dd =  (timeInMillis/60000) - (Calendar.getInstance().getTimeInMillis()/60000) ;
         long futureInMillis = SystemClock.elapsedRealtime() +(dd *60000) ;
 
@@ -86,10 +88,13 @@ public class CustomNotification {
 
     // private void set
     private Notification getNotification(String content, String notificationTitle) {
-        Notification.Builder builder = new Notification.Builder(context);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        builder.setShowWhen(true);
         builder.setContentTitle(notificationTitle);
         builder.setContentText(content);
         builder.setSmallIcon(R.drawable.icons8_calendar_50);
+
         return builder.build();
     }
 

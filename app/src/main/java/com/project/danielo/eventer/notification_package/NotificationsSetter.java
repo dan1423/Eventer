@@ -70,12 +70,15 @@ public class NotificationsSetter {
         dayOfEvent.set(Calendar.MINUTE,0);
         dayOfEvent.set(Calendar.SECOND,0);
         dayOfEvent.set(Calendar.MILLISECOND,0);
+        dayOfEvent.set(Calendar.MONTH,cal.getTime().getMonth());
         dayOfEvent.set(Calendar.DATE,cal.getTime().getDate());
+
 
         int notId = (int)id;
         CustomDateParser parser = new CustomDateParser(e.getEventDate());
         parser.setDateAndTime();
         String notificationContent = "Today at "+parser.getTime();
+
         //to differentiate other notitifactions for the same event, we must make the tag unique
         String notTag = notId+"one";
         CustomNotification notification = new CustomNotification(context, e.getEventName(),
@@ -113,6 +116,7 @@ public class NotificationsSetter {
         CustomDateParser parser = new CustomDateParser(e.getEventDate());
         parser.setDateAndTime();
         String notificationContent = "Starts at "+parser.getTime();
+        notificationContent+= e.getEventNote();
 
         //to differentiate other notifications for the same event, we must make the tag unique
         String notTag = notId+"two";
@@ -146,7 +150,8 @@ public class NotificationsSetter {
         parser.setDateAndTime();
         String notificationContent = "Starts now";
 
-        //to differentiate other notitifactions for the same event, we must make the tag unique
+
+        //to differentiate other notifications for the same event, we must make the tag unique
         String notTag = "final";
 
         CustomNotification notification = new CustomNotification(context, e.getEventName(),

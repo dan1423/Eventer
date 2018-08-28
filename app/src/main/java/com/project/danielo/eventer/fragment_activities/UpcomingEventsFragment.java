@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +18,7 @@ import com.project.danielo.eventer.Custom_Classes.CustomClickListener;
 import com.project.danielo.eventer.Custom_Classes.CustomLocationManager;
 import com.project.danielo.eventer.adapter.CustomEventObject;
 import com.project.danielo.eventer.adapter.CustomEventObjectAdapter;
-import com.project.danielo.eventer.dialog_fragments.CustomAlertDialogs;
+import com.project.danielo.eventer.dialog_fragments.AboutEventFragment;
 import com.project.danielo.eventer.sqllite.DBHandler;
 import com.project.danielo.eventer.R;
 import com.project.danielo.eventer.StaticVariables;
@@ -77,7 +79,7 @@ public class UpcomingEventsFragment extends Fragment {
 
             @Override
             public void onInfoClick(int pos) {
-                showEventDetails(pos);
+                openAboutEventDialog(customEventObjects.get(pos));
             }
         });
 
@@ -148,9 +150,21 @@ public class UpcomingEventsFragment extends Fragment {
         alertDialog.show();
     }
 
-    private void showEventDetails(int pos){
-        CustomAlertDialogs dialogs = new CustomAlertDialogs(getActivity());
-        dialogs.showEventDetails(customEventObjects.get(pos));
+    private void openAboutEventDialog(CustomEventObject customEventObject){
+
+        Fragment fragment = new AboutEventFragment();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        fragmentTransaction .setCustomAnimations(R.anim.grow_from_center, R.anim.blank,
+                R.anim.blank, R.anim.shrink_to_center);
+        fragmentTransaction.replace(R.id.main_nav,fragment);
+        fragmentTransaction.addToBackStack(null);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event_object", customEventObject);
+
+        fragment.setArguments(bundle);
+        fragmentTransaction.commit();
     }
 
 

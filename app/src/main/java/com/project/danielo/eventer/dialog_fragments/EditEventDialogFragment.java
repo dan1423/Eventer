@@ -1,5 +1,6 @@
 package com.project.danielo.eventer.dialog_fragments;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,10 +50,10 @@ public class EditEventDialogFragment extends DialogFragment {
     }
 
     //initialize views
-    private View editNewPaymentView;
-    Spinner spinnerPaymentType;
-    Button btnMain;
-    EditText editTextPaymentDate, editTextPaymentName, editTextTime;
+    private View editEventView;
+    Spinner spinnerEventType;
+    Button btnMain, btnEdit;
+    EditText editTextEventDate, editTextEventName, editTextTime;
     private ImageView imgExitFrag;
     AddAndEditMethods methods;
 
@@ -59,6 +62,7 @@ public class EditEventDialogFragment extends DialogFragment {
     Bundle bundle;
     CustomEventObject customEventObjectForEditMode;
     String currentEventName  = "";
+    String eventNote = "";
 
 
     @Override
@@ -80,15 +84,16 @@ public class EditEventDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        editNewPaymentView = inflater.inflate(R.layout.layout_for_add_event,container,false);
-        spinnerPaymentType = (Spinner) editNewPaymentView.findViewById(R.id.spinner_event_type);
-        btnMain = (Button) editNewPaymentView.findViewById(R.id.button_add_new);
-        editTextPaymentDate = (EditText) editNewPaymentView.findViewById(R.id.editText_date_of_event);
-        editTextPaymentName = (EditText) editNewPaymentView.findViewById(R.id.editText_event_name);
-        editTextTime = (EditText) editNewPaymentView.findViewById(R.id.editText_time_of_event) ;
-        imgExitFrag = (ImageView) editNewPaymentView.findViewById(R.id.img_exit_fragment);
+        editEventView = inflater.inflate(R.layout.layout_for_add_event,container,false);
+        spinnerEventType = (Spinner) editEventView.findViewById(R.id.spinner_event_type);
+        btnMain = (Button) editEventView.findViewById(R.id.button_add_new);
+        btnEdit = (Button) editEventView.findViewById(R.id.btn_add_note);
+        editTextEventDate = (EditText) editEventView.findViewById(R.id.editText_date_of_event);
+        editTextEventName = (EditText) editEventView.findViewById(R.id.editText_event_name);
+        editTextTime = (EditText) editEventView.findViewById(R.id.editText_time_of_event) ;
+        imgExitFrag = (ImageView) editEventView.findViewById(R.id.img_exit_fragment);
 
-        methods = new AddAndEditMethods(getContext(),dbHandler, editNewPaymentView);
+        methods = new AddAndEditMethods(getContext(),dbHandler, editEventView);
 
 
 
@@ -98,11 +103,11 @@ public class EditEventDialogFragment extends DialogFragment {
                         android.R.layout.simple_spinner_item);
         staticAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-      spinnerPaymentType.setAdapter(staticAdapter);
+      spinnerEventType.setAdapter(staticAdapter);
 
 
       //when he user clicks the date text box, we want to open a calendar dialog
-        editTextPaymentDate.setOnClickListener(new View.OnClickListener() {
+        editTextEventDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 methods.openCalendarDialog();
@@ -118,7 +123,7 @@ public class EditEventDialogFragment extends DialogFragment {
         if(bundle !=null) {
             setEditMode();
         }
-        return editNewPaymentView;
+        return editEventView;
     }
 
     /*****************USER WANTS TO EDIT AN EXISTING EVENT****************************************/
@@ -133,13 +138,13 @@ public class EditEventDialogFragment extends DialogFragment {
                    methods.showEnterNameDialog();
                 }else{
 
-                    Date date = methods.mergeDateAndTime(methods.getDateFromString ((editTextPaymentDate.getText().toString())),
+                    Date date = methods.mergeDateAndTime(methods.getDateFromString ((editTextEventDate.getText().toString())),
                             methods.getTimeFromString(editTextTime.getText().toString()));
 
-                    String paymentType = spinnerPaymentType.getSelectedItem().
+                    String eventType = spinnerEventType.getSelectedItem().
                             toString().replace("event","").trim();
-                    CustomEventObject customEventObject = new CustomEventObject(editTextPaymentName.getText().toString()
-                            ,date.getTime(),paymentType);
+                    CustomEventObject customEventObject = new CustomEventObject(editTextEventName.getText().toString()
+                            ,date.getTime(),eventType,eventNote);
                     customEventObject.setEventId(customEventObjectForEditMode.getEventId());
 
                     updateEvent(customEventObject);
@@ -152,6 +157,13 @@ public class EditEventDialogFragment extends DialogFragment {
                     backToPreviousFragment();
 
                 }
+            }
+        });
+
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openEditNoteDialog();
             }
         });
 
@@ -170,22 +182,25 @@ public class EditEventDialogFragment extends DialogFragment {
 
     private void setEditFields(){
         btnMain.setText("Save Changes");
-        editTextPaymentName.setText(customEventObjectForEditMode.getEventName());
+        editTextEventName.setText(customEventObjectForEditMode.getEventName());
 
 
         CustomDateParser parser = new CustomDateParser(customEventObjectForEditMode.getEventDate());
         parser.setDateAndTime();
-        editTextPaymentDate.setText(parser.getDate());
+        editTextEventDate.setText(parser.getDate());
 
         editTextTime.setText(parser.getTime());
+
+        eventNote = customEventObjectForEditMode.getEventNote();
 
 
         int posOfType = getSpinnerSelectionId(customEventObjectForEditMode.getEventType());
         if(posOfType != -1){
-            spinnerPaymentType.setSelection(posOfType);
+            spinnerEventType.setSelection(posOfType);
         }
 
        btnMain.setText("Save Changes");
+        btnEdit.setText("Edit Event Note");
 
     }
 
@@ -226,14 +241,44 @@ public class EditEventDialogFragment extends DialogFragment {
 
     //check if all input fields are filled/correct
     private boolean areFieldsSet(){
-        if(editTextPaymentName.getText().toString().trim().length() <= 0){
+        if(editTextEventName.getText().toString().trim().length() <= 0){
             return false;
         }
-        if(editTextPaymentDate.getText().toString().trim().length() <= 0){
+        if(editTextEventDate.getText().toString().trim().length() <= 0){
             return false;
         }
 
         return true;
+    }
+
+    private void openEditNoteDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Edit event note");
+
+        // Set up the input
+        final EditText input = new EditText(getContext());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
+        input.setSingleLine(false);
+        input.setText(eventNote);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                eventNote = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private boolean isNotificationOn(){

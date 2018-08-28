@@ -4,7 +4,7 @@ import com.project.danielo.eventer.sqllite.DBHandler;
 
 public class StaticVariables {
 
-    public static int DATABASE_VERSION = 1;
+    public static int DATABASE_VERSION = 2;
 
 
 }

@@ -23,8 +23,8 @@ import android.widget.Spinner;
 import com.project.danielo.eventer.Custom_Classes.CustomClickListener;
 import com.project.danielo.eventer.adapter.CustomEventObject;
 import com.project.danielo.eventer.adapter.CustomEventObjectAdapter;
+import com.project.danielo.eventer.dialog_fragments.AboutEventFragment;
 import com.project.danielo.eventer.dialog_fragments.AddNewEventDialogFragment;
-import com.project.danielo.eventer.dialog_fragments.CustomAlertDialogs;
 import com.project.danielo.eventer.dialog_fragments.EditEventDialogFragment;
 import com.project.danielo.eventer.notification_package.CustomNotification;
 import com.project.danielo.eventer.sqllite.DBHandler;
@@ -130,7 +130,7 @@ public class EventListFragment extends Fragment {
 
               @Override
               public void onInfoClick(int pos) {
-                showEventDetails(pos);
+                openAboutEventDialog(customEventObjects.get(pos));
               }
           });
 
@@ -196,6 +196,23 @@ public class EventListFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
+    private void openAboutEventDialog(CustomEventObject customEventObject){
+
+        Fragment fragment = new AboutEventFragment();
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+        fragmentTransaction .setCustomAnimations(R.anim.grow_from_center, R.anim.blank,
+                R.anim.blank, R.anim.shrink_to_center);
+        fragmentTransaction.replace(R.id.main_nav,fragment);
+        fragmentTransaction.addToBackStack(null);
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("event_object", customEventObject);
+
+        fragment.setArguments(bundle);
+        fragmentTransaction.commit();
+    }
+
     private void showDeleteConfirmationDialog(final CustomEventObject customEventObject, final int pos){
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(),android.R.style.Theme_DeviceDefault_Light_Dialog_MinWidth);
@@ -251,10 +268,7 @@ public class EventListFragment extends Fragment {
 
     }
 
-    private void showEventDetails(int pos){
-        CustomAlertDialogs dialogs = new CustomAlertDialogs(getActivity());
-        dialogs.showEventDetails(customEventObjects.get(pos));
-    }
+
 
     //if there are no events saved, display instruction of adding an event
     private void hideOrDIsplayInstruction(){

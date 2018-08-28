@@ -28,6 +28,10 @@ public class CustomReciever extends BroadcastReceiver {
             int id = intent.getIntExtra(NOTIFICATION_ID, 0);
             String tag = intent.getStringExtra(NOTIFICATION_TAG);
             notificationManager.notify(tag,id, notification);
+            //Intent i = new Intent(CustomReciever.this,)
+            //context.startActivity();
+
+
 
 
 

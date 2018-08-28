@@ -5,20 +5,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.project.danielo.eventer.StaticVariables;
 import com.project.danielo.eventer.adapter.CustomEventObject;
 
 import java.util.ArrayList;
 
 public class DBHandler extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION =  1;
+    private static final int DATABASE_VERSION = StaticVariables.DATABASE_VERSION;
     private static final String DATABASE_NAME = "events.db";
     private static final String TABLE_EVENTS = "events";
     private static final String COLUMN_ID = "event_id";
     private static final String COLUMN_EVENTNAME = "event_name";
     private static final String COLUMN_EVENTTYPE = "event_type";
     private static final String COLUMN_EVENTDATE = "event_date";
+    private static final String COLUMN_EVENTNOTE = "event_note";
    
 
 
@@ -34,7 +37,7 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "CREATE TABLE " + TABLE_EVENTS + "(" +
                 COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_EVENTNAME + " TEXT, " + COLUMN_EVENTTYPE +" TEXT, "+
-                COLUMN_EVENTDATE+" TEXT "+
+                COLUMN_EVENTDATE+" TEXT, "+ COLUMN_EVENTNOTE+" TEXT "+
                 ");";
         db.execSQL(query);
     }
@@ -51,6 +54,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(COLUMN_EVENTNAME, customEventObject.getEventName());
         values.put(COLUMN_EVENTTYPE, customEventObject.getEventType()+"");
         values.put(COLUMN_EVENTDATE, customEventObject.getEventDate()+"");
+        values.put(COLUMN_EVENTNOTE,customEventObject.getEventNote());
         SQLiteDatabase db = getWritableDatabase();
        long insertedId =  db.insert(TABLE_EVENTS, null, values);
         db.close();
@@ -65,17 +69,20 @@ public class DBHandler extends SQLiteOpenHelper {
         String eventName = customEventObjects.get(0).getEventName();
         String eventType = customEventObjects.get(0).getEventType();
         String eventDate = customEventObjects.get(0).getEventDate()+"";
-       String queryString =  "INSERT INTO "+ TABLE_EVENTS+"(event_name,event_type,event_date)"+
+        String eventNote = customEventObjects.get(0).getEventNote();
+       String queryString =  "INSERT INTO "+ TABLE_EVENTS+"(event_name,event_type,event_date,event_note)"+
                             " SELECT '"+eventName+ "' AS "+ COLUMN_EVENTNAME+ ", '"+
                             eventType + "' AS "+ COLUMN_EVENTTYPE+ ", '"+
-                            eventDate + "' AS " + COLUMN_EVENTDATE;
+                            eventDate + "' AS " + COLUMN_EVENTDATE+ ", '"+
+                            eventNote + "' AS " + COLUMN_EVENTNOTE;
 
         for(int i = 1; i < customEventObjects.size(); i++){
             eventName = customEventObjects.get(i).getEventName();
             eventType = customEventObjects.get(i).getEventType();
             eventDate = customEventObjects.get(i).getEventDate()+"";
+            eventNote = customEventObjects.get(i).getEventNote();
 
-           queryString +=   " UNION ALL SELECT '"+ eventName +"','"+eventType+"','"+eventDate +"'";
+           queryString +=   " UNION ALL SELECT '"+ eventName +"','"+eventType+"','"+eventDate +"'"+eventNote+"'";
 
 
         }
@@ -133,7 +140,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 CustomEventObject customEventObject = new CustomEventObject(
                         recordSet.getString(recordSet.getColumnIndex("event_name")),
                         Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date"))),//convert string to long
-                        recordSet.getString(recordSet.getColumnIndex("event_type")) );
+                        recordSet.getString(recordSet.getColumnIndex("event_type")),
+                        recordSet.getString(recordSet.getColumnIndex("event_note")) );
 
                 customEventObject.setEventId(Integer.parseInt(recordSet.getString(recordSet.getColumnIndex("event_id"))));
 
@@ -151,7 +159,8 @@ public class DBHandler extends SQLiteOpenHelper {
         String query = "UPDATE "+ TABLE_EVENTS +
         " SET event_name = '" + customEventObject.getEventName() +"', "
                 +"event_type = '"+ customEventObject.getEventType()+"', "
-                +"event_date = '"+ customEventObject.getEventDate()+
+                +"event_date = '"+ customEventObject.getEventDate()+"', "
+                +"event_note = '"+ customEventObject.getEventNote()+
         "' WHERE event_id =  " + customEventObject.getEventId();
 
         SQLiteDatabase db = getWritableDatabase();

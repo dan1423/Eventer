@@ -36,23 +36,14 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="500dp"
             android:layout_height="wrap_content"
-            android:text="GOOGLE DRIVE SETTINGS" />
-
-        <Button
-            android:id="@+id/btn_import_events"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:text="IMPORT EVENTS"
-            tools:layout_editor_absoluteX="146dp"
-            tools:layout_editor_absoluteY="281dp" />
+            android:text="GOOGLE DRIVE " />
 
         <Button
             android:id="@+id/btn_export_events"
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="500dp"
             android:layout_height="wrap_content"
-            android:text="EXPORT EVENTS" />
+            android:text="EXPORT EVENTS TO EMAIL" />
 
         <Button
             android:id="@+id/btn_delete_all_events"

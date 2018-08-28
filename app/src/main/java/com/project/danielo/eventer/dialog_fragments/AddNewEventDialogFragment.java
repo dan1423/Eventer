@@ -1,5 +1,6 @@
 package com.project.danielo.eventer.dialog_fragments;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -7,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +26,7 @@ import com.project.danielo.eventer.StaticVariables;
 import com.project.danielo.eventer.adapter.CustomEventObject;
 import com.project.danielo.eventer.sqllite.DBHandler;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class AddNewEventDialogFragment extends Fragment{
@@ -32,11 +37,12 @@ public class AddNewEventDialogFragment extends Fragment{
 
     //initialize views
     private View addNewEventView;
-    Spinner spinnerEventType;
-    Button btnAdd;
-    EditText addEventType, addEventName, addEventTime;
+    private Spinner spinnerEventType;
+    private Button btnAddEvent, btnAddNote;
+   private  EditText addEventType, addEventName, addEventTime;
     private ImageView imgExitFrag;
-    AddAndEditMethods methods;
+    private AddAndEditMethods methods;
+    private String eventNote = "";
 
     //initialize custom objects
     DBHandler dbHandler;
@@ -56,11 +62,13 @@ public class AddNewEventDialogFragment extends Fragment{
 
         addNewEventView = inflater.inflate(R.layout.layout_for_add_event,container,false);
         spinnerEventType = (Spinner) addNewEventView.findViewById(R.id.spinner_event_type);
-        btnAdd = (Button) addNewEventView.findViewById(R.id.button_add_new);
+        btnAddEvent = (Button) addNewEventView.findViewById(R.id.button_add_new);
+        btnAddNote = (Button)addNewEventView.findViewById(R.id.btn_add_note);
         addEventType = (EditText) addNewEventView.findViewById(R.id.editText_date_of_event);
         addEventName = (EditText) addNewEventView.findViewById(R.id.editText_event_name);
         addEventTime = (EditText) addNewEventView.findViewById(R.id.editText_time_of_event);
         imgExitFrag = (ImageView) addNewEventView.findViewById(R.id.img_exit_fragment);
+
 
         methods = new AddAndEditMethods(getContext(),dbHandler, addNewEventView);
 
@@ -95,7 +103,7 @@ public class AddNewEventDialogFragment extends Fragment{
     }
 
     private  void setLayoutEvents(){
-        btnAdd.setOnClickListener(new View.OnClickListener() {
+        btnAddEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!areFieldsSet()){
@@ -105,12 +113,13 @@ public class AddNewEventDialogFragment extends Fragment{
                     Date date = methods.mergeDateAndTime(methods.getDateFromString ((addEventType.getText().toString())),
                                                     methods.getTimeFromString(addEventTime.getText().toString()));
 
-                    String paymentType = spinnerEventType.getSelectedItem().
+                    String eventType = spinnerEventType.getSelectedItem().
                             toString().replace("event","").trim();
                     CustomEventObject customEventObject = new CustomEventObject(addEventName.getText().toString()
-                            ,date.getTime(),paymentType);
+                            ,date.getTime(),eventType,eventNote);
 
                   long id = methods.addNewEventToDatabase(customEventObject);
+
                   if(isNotificationOn()){
                      methods.setupNotification(customEventObject,id);
                   }
@@ -118,6 +127,13 @@ public class AddNewEventDialogFragment extends Fragment{
                   exitAddDialog();
                 }
 
+            }
+        });
+
+        btnAddNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openNoteDialog();
             }
         });
 
@@ -151,12 +167,43 @@ public class AddNewEventDialogFragment extends Fragment{
         return true;
     }
 
-    //check if notitifcations settings are on before adding event notification
+    //check if notifications settings are on before adding event notification
     private boolean isNotificationOn(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean isOn = preferences.getBoolean("notifications", true);
         return isOn;
     }
+
+    private void openNoteDialog(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add a note to this event");
+
+        // Set up the input
+        final EditText input = new EditText(getContext());
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
+        input.setSingleLine(false);
+        input.setText(eventNote);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+               eventNote = input.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
 
 
 }
