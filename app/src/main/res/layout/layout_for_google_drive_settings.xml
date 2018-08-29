@@ -96,7 +96,7 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="500dp"
             android:layout_height="wrap_content"
-            android:text="SEND EVENT TEMPLATE TO GMAIL" />
+            android:text="GET EVENTER TEMPLATE" />
 
     </LinearLayout>
 

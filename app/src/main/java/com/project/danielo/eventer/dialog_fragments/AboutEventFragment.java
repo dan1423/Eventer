@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,13 +44,13 @@ public class AboutEventFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         aboutEventView = inflater.inflate(R.layout.layout_for_event_details_dialog,null,false);
-        eventName =(TextView) aboutEventView.findViewById(R.id.txt_about_event_title);
-        eventDate = (TextView) aboutEventView.findViewById(R.id.txt_about_event_date);
-        eventNote = (TextView)aboutEventView.findViewById(R.id.txt_about_event_note);
-        eventType =(TextView) aboutEventView.findViewById(R.id.txt_about_event_type);
-        imgExitFragment =(ImageView) aboutEventView.findViewById(R.id.img_exit_about_fragment);
+        eventName =(TextView) aboutEventView.findViewById(R.id.txt_notification_name);
+        eventDate = (TextView) aboutEventView.findViewById(R.id.txt_notification_date);
+        eventNote = (TextView)aboutEventView.findViewById(R.id.txt_notification_note);
+        eventType =(TextView) aboutEventView.findViewById(R.id.txt_notification_type);
+        imgExitFragment =(ImageView) aboutEventView.findViewById(R.id.img_exit_notification_Activity);
 
-        eventName.setText("About "+eventFromBundle.getEventName());
+        eventName.setText(eventFromBundle.getEventName());
         CustomDateParser parser = new CustomDateParser(eventFromBundle.getEventDate());
         parser.setDateAndTime();
         eventDate.setText("Event on "+ parser.getDate().trim() + " at "+parser.getTime());

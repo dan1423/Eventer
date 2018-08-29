@@ -174,6 +174,26 @@ public class DBHandler extends SQLiteOpenHelper {
 
     }
 
+    public CustomEventObject getEventObject(int id){
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_EVENTS +" WHERE event_id = " + id ;
+        SQLiteDatabase database = getReadableDatabase();
+
+        Cursor recordSet = db.rawQuery(query, null);
+        //Move to the first row in your results
+        recordSet.moveToFirst();
+
+        CustomEventObject e = new CustomEventObject(
+                recordSet.getString(recordSet.getColumnIndex("event_name")),
+                Long.parseLong(recordSet.getString(recordSet.getColumnIndex("event_date"))),//convert string to long
+                recordSet.getString(recordSet.getColumnIndex("event_type")),
+                recordSet.getString(recordSet.getColumnIndex("event_note")) );
+
+        e.setEventId(Integer.parseInt(recordSet.getString(recordSet.getColumnIndex("event_id"))));
+
+        return e;
+    }
+
     public void clearTable(){
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL("DELETE FROM "+ TABLE_EVENTS);

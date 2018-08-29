@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.creativityapps.gmailbackgroundlibrary.BackgroundMail;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -68,7 +69,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
+
 
 import static android.app.Activity.RESULT_OK;
 
@@ -90,6 +93,7 @@ public class GoogleDriveFragment extends Fragment{
     private TaskCompletionSource<DriveId> mOpenItemTaskSource;
     private DriveContents driveContents;
     private Metadata metadata;
+    private String gmailOfUser = "";
 
 
     public GoogleDriveFragment(){
@@ -175,7 +179,11 @@ public class GoogleDriveFragment extends Fragment{
                 if (!isConnectedToTheInternet()) {
                     openPleaseConnectToInternet();
 
-                }else{
+                }else if(getEventsFromDatabase().isEmpty()){
+                    openNothingToExportDialog();
+                }
+
+                else{
                     if(!isUserSignedInToGoogleDriveAccount()){
                         openSignInGoogleDriveAccountDialog();
                     }else{
@@ -190,7 +198,7 @@ public class GoogleDriveFragment extends Fragment{
 
         btnGetEventTemplates.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v){
-
+                sendEventerTemplateToEmail();
             }
         });
 
@@ -219,6 +227,7 @@ public class GoogleDriveFragment extends Fragment{
                 Task<GoogleSignInAccount> getAccountTask =
                         GoogleSignIn.getSignedInAccountFromIntent(data);
                 if (getAccountTask.isSuccessful()) {
+
                     initializeDriveClient(getAccountTask.getResult());
                 } else {
 
@@ -252,6 +261,7 @@ public class GoogleDriveFragment extends Fragment{
         } else {
             GoogleSignInOptions signInOptions =
                     new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestEmail()
                             .requestScopes(Drive.SCOPE_FILE)
                             .requestScopes(Drive.SCOPE_APPFOLDER)
                             .build();
@@ -262,8 +272,10 @@ public class GoogleDriveFragment extends Fragment{
     }
 
     private void initializeDriveClient(GoogleSignInAccount signInAccount) {
-        //Log.i("DEBUG MODE","in initialize client");
+        gmailOfUser = signInAccount.getEmail();
         driveClient = Drive.getDriveClient(getContext(), signInAccount);
+        Log.i("GoogleDriveAPI",signInAccount.toJson());
+
         resourceClient = Drive.getDriveResourceClient(getContext(), signInAccount);
         if(progressBar != null) {
             progressBar.setVisibility(View.INVISIBLE);
@@ -344,8 +356,8 @@ public class GoogleDriveFragment extends Fragment{
 
     //upload events to Google Drive Account
     private void uploadFile(String eventsAsString){
+        progressBar.setVisibility(View.VISIBLE);
 
-        // [START drive_android_create_file]
         final Task<DriveFolder> rootFolderTask = resourceClient.getRootFolder();
         final Task<DriveContents> createContentsTask = resourceClient.createContents();
         Tasks.whenAll(rootFolderTask, createContentsTask)
@@ -367,13 +379,13 @@ public class GoogleDriveFragment extends Fragment{
                 })
                 .addOnSuccessListener(getActivity(),
                         driveFile -> {
-                            Toast.makeText(getContext(),"File successfully uploaded", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(getContext(),"Successfuly imported events as CSV to Drive account", Toast.LENGTH_LONG).show();
                         })
                 .addOnFailureListener(getActivity(), e -> {
-                    Log.e(TAG, "Unable to create file", e);
-                    Toast.makeText(getContext(),"File successfully uploaded", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getContext(),"Failed to export events", Toast.LENGTH_LONG).show();
                 });
-        // [END drive_android_create_file]
     }
 
 
@@ -563,6 +575,19 @@ public class GoogleDriveFragment extends Fragment{
         alertDialog.show();
     }
 
+    private void openNothingToExportDialog(){
+        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        alertDialog.setTitle("Note");
+        alertDialog.setMessage("There are no events to export");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+
     private void backToSettings(){
         FragmentManager fm = getFragmentManager();
         fm.popBackStack();
@@ -580,15 +605,49 @@ public class GoogleDriveFragment extends Fragment{
     }
 
     private  void sendEventerTemplateToEmail(){
+            if(!isUserSignedInToGoogleDriveAccount()){
+                openSignInGoogleDriveAccountDialog();
+                return;
+            }
+
+            if (!isConnectedToTheInternet()){
+                openPleaseConnectToInternet();
+                return;
+            }
+            sendEmail(gmailOfUser);
 
     }
 
-    private void openFileTypeDialog(){
+   private void sendEmail(String gmailOfUser){
+       BackgroundMail.newBuilder(getContext())
+               .withUsername("eventer1423@gmail.com")
+               .withPassword("retneve123")
+               .withMailto(gmailOfUser)
+               .withType(BackgroundMail.TYPE_PLAIN)
+               .withSubject("Eventer template link")
+               .withBody("https://danieloluwadare.com/eventer/")
+               .withSendingMessage("Sending download link")
+               .withSendingMessageError("Unsuccessful, please try again later")
+               .withSendingMessageSuccess("Eventer download Link successfully sent to email")
+
+
+               .withOnSuccessCallback(new BackgroundMail.OnSuccessCallback() {
+                   @Override
+                   public void onSuccess() {
+
+                   }
+               })
+               .withOnFailCallback(new BackgroundMail.OnFailCallback() {
+                   @Override
+                   public void onFail() {
+                   }
+               })
+               .send();
 
     }
 
-    private void openEventNameDialog(){
 
-    }
+
+
 
 }

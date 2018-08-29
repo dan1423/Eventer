@@ -11,6 +11,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
+import com.project.danielo.eventer.MainActivity;
+
 import static android.content.Context.VIBRATOR_SERVICE;
 
 public class CustomReciever extends BroadcastReceiver {
@@ -28,8 +30,8 @@ public class CustomReciever extends BroadcastReceiver {
             int id = intent.getIntExtra(NOTIFICATION_ID, 0);
             String tag = intent.getStringExtra(NOTIFICATION_TAG);
             notificationManager.notify(tag,id, notification);
-            //Intent i = new Intent(CustomReciever.this,)
-            //context.startActivity();
+
+
 
 
 
@@ -54,6 +56,8 @@ public class CustomReciever extends BroadcastReceiver {
         boolean isVibrateOn = preferences.getBoolean("vibration", true);
         return isVibrateOn;
     }
+
+
 
 
 }

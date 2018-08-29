@@ -116,7 +116,7 @@ public class NotificationsSetter {
         CustomDateParser parser = new CustomDateParser(e.getEventDate());
         parser.setDateAndTime();
         String notificationContent = "Starts at "+parser.getTime();
-        notificationContent+= e.getEventNote();
+       // notificationContent+= e.getEventNote();
 
         //to differentiate other notifications for the same event, we must make the tag unique
         String notTag = notId+"two";

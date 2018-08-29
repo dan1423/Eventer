@@ -1,6 +1,7 @@
 package com.project.danielo.eventer.fragment_activities;
 
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -141,8 +143,7 @@ public class SettingsFragments extends Fragment {
         btnDriveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                openGoogleDriveSettings();
+                 openGoogleDriveSettings();
             }
         });
         return settingsView;
@@ -221,7 +222,7 @@ public class SettingsFragments extends Fragment {
     }
 
     private void startExport(String email){
-        DBHandler dbHandler = new DBHandler(getContext(),null, null, 1);
+        DBHandler dbHandler = new DBHandler(getContext(),null, null, StaticVariables.DATABASE_VERSION);
         ArrayList<CustomEventObject> customEventObjects = dbHandler.queryAllEvents();
         String csv = buildCSV(customEventObjects);
         CSVExporter csvExporter = new CSVExporter(getContext(), csv,email);
@@ -317,6 +318,7 @@ public class SettingsFragments extends Fragment {
 
        fragmentTransaction.commit();
    }
+
 
 
 }

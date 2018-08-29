@@ -5,15 +5,17 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
-import com.project.danielo.eventer.MainActivity;
+import com.project.danielo.eventer.NotificationDialogActivity;
 import com.project.danielo.eventer.R;
+import com.project.danielo.eventer.StaticVariables;
+import com.project.danielo.eventer.adapter.CustomEventObject;
+import com.project.danielo.eventer.sqllite.DBHandler;
 
 import java.util.Calendar;
-import java.util.Date;
 
 
 public class CustomNotification {
@@ -50,7 +52,9 @@ public class CustomNotification {
 
 
     public void setNotification(){
-        scheduleNotification(getNotification(notificationContent,notificationTitle), notId, notTag);
+        int id = Math.abs(notId);
+        CustomEventObject e = getCustomEventObjectWithId(id);
+        scheduleNotification(getNotification(notificationContent,notificationTitle,e), notId, notTag);
     }
 
     public void removeNotification(){
@@ -87,16 +91,33 @@ public class CustomNotification {
 
 
     // private void set
-    private Notification getNotification(String content, String notificationTitle) {
+    private Notification getNotification(String content, String notificationTitle, CustomEventObject eventObject) {
+
+        Intent intent = new Intent(context,NotificationDialogActivity.class);
+        intent.putExtra("event_object",eventObject);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,1,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setShowWhen(true);
         builder.setContentTitle(notificationTitle);
         builder.setContentText(content);
+        builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
+
         builder.setSmallIcon(R.drawable.icons8_calendar_50);
+       // builder.on
 
         return builder.build();
     }
+
+    private CustomEventObject getCustomEventObjectWithId(int id){
+        DBHandler handler = new DBHandler(context,null,null, StaticVariables.DATABASE_VERSION);
+        CustomEventObject e = handler.getEventObject(id);
+
+        return e;
+    }
+
+
 
 
     @Override
